@@ -6,35 +6,39 @@ function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  async function streamVideo() {
-    if (
-      navigator.mediaDevices &&
-      (await navigator.mediaDevices.getUserMedia({ video: true }))
-    ) {
-      navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          videoRef.current.play();
-        }
-      });
-    }
-  }
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext("2d");
-    if (!ctx) return;
-    streamVideo();
+    let animationId: number;
+    let stream: MediaStream | null;
+    async function startCamera() {
+      stream = await navigator.mediaDevices.getUserMedia({ video: true }); // Asks browser for camera access and Get camera stream
+      if (!videoRef.current || !canvasRef.current) return;
+      videoRef.current.srcObject = stream; //Attach stream to video
+      await videoRef.current.play();
+
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d")!;
+      canvas.width = 1200;
+      canvas.height = 800;
+      async function drawFrame() {
+        ctx.drawImage(videoRef.current!, 0, 0, canvas.width, canvas.height);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+        animationId = requestAnimationFrame(drawFrame);
+      }
+      drawFrame();
+    }
+    startCamera();
+
+    return () => {
+      if (animationId) cancelAnimationFrame(animationId);
+      if (stream) stream.getTracks().forEach((track) => track.stop());
+    };
   }, []);
   return (
     <div className="bg-black w-screen h-screen">
       <p className="text-2xl"> hello world</p>
-      <canvas
-        ref={canvasRef}
-        height={500}
-        width={500}
-        className="bg-amber-300"
-      />
-      <video ref={videoRef} height={500} width={500} />
+      <canvas ref={canvasRef} />
+      <video ref={videoRef} muted playsInline style={{ display: "none" }} />
     </div>
   );
 }
