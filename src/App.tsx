@@ -22,7 +22,19 @@ function App() {
       async function drawFrame() {
         ctx.drawImage(videoRef.current!, 0, 0, canvas.width, canvas.height);
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+        let grayscale = [];
+        for (let i = 0; i < data.length; i += 4) {
+          let r = data[i];
+          let g = data[i + 1];
+          let b = data[i + 2];
+          let gray = 0.299 * r + 0.587 * g + 0.114 * b;
 
+          data[i] = gray; // R
+          data[i + 1] = gray; // G
+          data[i + 2] = gray; // B
+        }
+        ctx.putImageData(imageData, 0, 0);
         animationId = requestAnimationFrame(drawFrame);
       }
       drawFrame();
