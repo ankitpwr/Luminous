@@ -8,7 +8,25 @@ function App() {
   const preRef = useRef<HTMLPreElement>(null);
 
   useEffect(() => {
-    const asciiChar = ["@", "%", "#", "*", "+", "=", "-", ":", ",", " "];
+    const asciiChar = [
+      "@",
+      "%",
+      "#",
+      "*",
+      "+",
+      "=",
+      ":",
+      ",",
+      "-",
+      ".",
+      " ",
+      " ",
+      " ",
+      " ",
+      " ",
+      " ",
+      " ",
+    ];
     let animationId: number;
     let stream: MediaStream | null;
     async function startCamera() {
@@ -19,8 +37,8 @@ function App() {
 
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d")!;
-      canvas.width = 1200;
-      canvas.height = 800;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
       async function drawFrame() {
         ctx.drawImage(videoRef.current!, 0, 0, canvas.width, canvas.height);
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -41,7 +59,7 @@ function App() {
 
         let asciiImage = [];
         let blockHeigth = 8;
-        let blockWidth = 8;
+        let blockWidth = 10;
 
         for (let i = 0; i < imageData.height; i += blockHeigth) {
           let row = "";
@@ -88,7 +106,7 @@ function App() {
       <canvas ref={canvasRef} hidden />
       <video ref={videoRef} muted playsInline style={{ display: "none" }} />
       <pre
-        className="leading-1 tracking-tight text-base font-mono text-white"
+        className="leading-2 tracking-wide text-gray-400 text-lg w-screen h-screen"
         ref={preRef}
       >
         {" "}
