@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import "./App.css";
+import { Button } from "./components/ui/button";
 
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -19,6 +20,8 @@ function App() {
       ",",
       "-",
       ".",
+      " ",
+      " ",
       " ",
       " ",
       " ",
@@ -101,16 +104,34 @@ function App() {
     };
   }, []);
   return (
-    <div className=" bg-black w-screen h-screen">
-      <p className="text-2xl"> hello world</p>
+    <div className=" bg-black w-screen h-screen ">
       <canvas ref={canvasRef} hidden />
       <video ref={videoRef} muted playsInline style={{ display: "none" }} />
       <pre
-        className="leading-2 tracking-wide text-gray-400 text-lg w-screen h-screen"
+        className="leading-2 tracking-normal text-gray-700 text-lg w-screen h-screen"
         ref={preRef}
       >
         {" "}
       </pre>
+
+      <Button
+        variant="secondary"
+        size="lg"
+        className="
+    fixed left-1/2 -translate-x-1/2 bottom-8 
+    w-24 h-24 rounded-full bg-transparent 
+    border-[3px] border-white 
+    hover:bg-transparent transition-transform active:scale-95
+  "
+      >
+        <div
+          className="
+      w-full h-full 
+      bg-white rounded-full 
+      shadow-md
+    "
+        />
+      </Button>
     </div>
   );
 }
