@@ -3,14 +3,13 @@ import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import { Button } from "./components/ui/button";
 import Dock from "./components/Dock";
-import { Camera, CameraIcon, Video, VideoIcon } from "lucide-react";
-import { image } from "motion/react-client";
+import { CameraIcon, VideoIcon } from "lucide-react";
 
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const preRef = useRef<HTMLPreElement>(null);
-  const fontSize = 10;
+  const fontSize = 12;
   const lineHeight = 8;
   const letterSpacing = 2;
 
@@ -33,27 +32,30 @@ function App() {
     console.log("capture called 1");
 
     if (!preRef.current) return;
-    const asciitext = preRef.current.textContent;
+
     const newCanvas = document.createElement("canvas");
     const newctx = newCanvas.getContext("2d");
     if (!newctx) return;
-    newCanvas.height = preRef.current.scrollHeight;
-    (newCanvas.width = preRef.current.scrollWidth),
-      (newctx!.fillStyle = "black");
-    newctx?.fillRect(
-      0,
-      0,
-      preRef.current.scrollWidth,
-      preRef.current.scrollHeight
-    );
-
-    newctx.font = `${fontSize} monospace`;
-    newctx.fillStyle = "gray";
     const lines = preRef.current.textContent.replace(/\r\n/g, "\n").split("\n");
-    const lineHeigth = lineHeight;
-    lines.forEach((line, index) => {
-      console.log(line, index);
-      newctx.fillText(line, 10, 25 + index * lineHeigth);
+    const { width: charWidth, height: charHeight } = measureCharBox();
+    const cols = Math.max(...lines.map((l) => l.length));
+    const rows = lines.length;
+    newCanvas.height = rows * charHeight;
+    newCanvas.width = cols * charWidth;
+    newctx!.fillStyle = "black";
+    newctx?.fillRect(0, 0, newCanvas.width, newCanvas.height);
+
+    newctx.font = `${fontSize}px monospace`;
+    newctx.textBaseline = "top";
+    newctx.fillStyle = "#6a7282";
+
+    lines.forEach((line, rowIndex) => {
+      let x = 0;
+      const y = rowIndex * charHeight;
+      for (let i = 0; i < line.length; i++) {
+        newctx.fillText(line[i], x, y);
+        x += charWidth;
+      }
     });
 
     const dataUrl = newCanvas.toDataURL("image/png");
@@ -70,9 +72,9 @@ function App() {
     const span = document.createElement("span");
     span.textContent = "@";
     span.style.fontFamily = "monospace";
-    span.style.fontSize = `${fontSize}`;
-    span.style.letterSpacing = `${letterSpacing}`;
-    span.style.lineHeight = `${lineHeight}`;
+    span.style.fontSize = `${fontSize - 2}px`;
+    span.style.letterSpacing = `${letterSpacing}px`;
+    span.style.lineHeight = `${lineHeight}px`;
     span.style.position = "absolute";
     span.style.visibility = "hidden";
 
@@ -106,7 +108,7 @@ function App() {
 
         //grayscale logic
         const data = imageData.data;
-        let grayscale = [];
+
         for (let i = 0; i < data.length; i += 4) {
           let r = data[i];
           let g = data[i + 1];
