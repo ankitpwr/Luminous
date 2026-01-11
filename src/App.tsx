@@ -2,34 +2,92 @@ import { useEffect, useRef, useState } from "react";
 
 import "./App.css";
 import { Button } from "./components/ui/button";
+import Dock from "./components/Dock";
+import { Camera, CameraIcon, Video, VideoIcon } from "lucide-react";
+import { image } from "motion/react-client";
 
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const preRef = useRef<HTMLPreElement>(null);
+  const fontSize = 10;
+  const lineHeight = 8;
+  const letterSpacing = 2;
+
+  const items = [
+    {
+      icon: <CameraIcon color="white" size={18} />,
+      label: "camera",
+      onClick: () => alert("camera"),
+      className: "bg-transparent border-transparent hover:border-white",
+    },
+    {
+      icon: <VideoIcon color="white" size={18} />,
+      label: "video",
+      onClick: () => alert("A"),
+      className: "bg-transparent border-transparent hover:border-white",
+    },
+  ];
+
+  function captureImage() {
+    console.log("capture called 1");
+
+    if (!preRef.current) return;
+    const asciitext = preRef.current.textContent;
+    const newCanvas = document.createElement("canvas");
+    const newctx = newCanvas.getContext("2d");
+    if (!newctx) return;
+    newCanvas.height = preRef.current.scrollHeight;
+    (newCanvas.width = preRef.current.scrollWidth),
+      (newctx!.fillStyle = "black");
+    newctx?.fillRect(
+      0,
+      0,
+      preRef.current.scrollWidth,
+      preRef.current.scrollHeight
+    );
+
+    newctx.font = `${fontSize} monospace`;
+    newctx.fillStyle = "gray";
+    const lines = preRef.current.textContent.replace(/\r\n/g, "\n").split("\n");
+    const lineHeigth = lineHeight;
+    lines.forEach((line, index) => {
+      console.log(line, index);
+      newctx.fillText(line, 10, 25 + index * lineHeigth);
+    });
+
+    const dataUrl = newCanvas.toDataURL("image/png");
+    console.log(dataUrl);
+    const link = document.createElement("a");
+    link.href = dataUrl;
+    link.download = `luminous-ascii${Date.now()}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  function measureCharBox() {
+    const span = document.createElement("span");
+    span.textContent = "@";
+    span.style.fontFamily = "monospace";
+    span.style.fontSize = `${fontSize}`;
+    span.style.letterSpacing = `${letterSpacing}`;
+    span.style.lineHeight = `${lineHeight}`;
+    span.style.position = "absolute";
+    span.style.visibility = "hidden";
+
+    document.body.appendChild(span);
+    const rect = span.getBoundingClientRect();
+    document.body.removeChild(span);
+
+    return {
+      width: Math.ceil(rect.width),
+      height: Math.ceil(rect.height),
+    };
+  }
 
   useEffect(() => {
-    const asciiChar = [
-      "@",
-      "%",
-      "#",
-      "*",
-      "+",
-      "=",
-      ":",
-      ",",
-      "-",
-      ".",
-      " ",
-      " ",
-      " ",
-      " ",
-      " ",
-      " ",
-      " ",
-      " ",
-      " ",
-    ];
+    const asciiChar = [" ", ".", "-", ",", ":", "=", "+", "*", "#", "%", "@"];
     let animationId: number;
     let stream: MediaStream | null;
     async function startCamera() {
@@ -61,17 +119,18 @@ function App() {
         }
 
         let asciiImage = [];
-        let blockHeigth = 8;
-        let blockWidth = 10;
+        const { width: charwidth, height: charheight } = measureCharBox();
+        const blockHeight = charheight;
+        const blockWidth = charwidth;
 
-        for (let i = 0; i < imageData.height; i += blockHeigth) {
+        for (let i = 0; i < imageData.height; i += blockHeight) {
           let row = "";
 
           for (let j = 0; j < imageData.width; j += blockWidth) {
             let sum = 0;
             let count = 0;
 
-            for (let x = 0; x < blockHeigth; x++) {
+            for (let x = 0; x < blockHeight; x++) {
               for (let y = 0; y < blockWidth; y++) {
                 const px = j + y;
                 const py = i + x;
@@ -104,23 +163,39 @@ function App() {
     };
   }, []);
   return (
-    <div className=" bg-black w-screen h-screen ">
+    <div className=" bg-black w-screen h-screen overflow-hidden">
       <canvas ref={canvasRef} hidden />
       <video ref={videoRef} muted playsInline style={{ display: "none" }} />
       <pre
-        className="leading-2 tracking-normal text-gray-700 text-lg w-screen h-screen"
+        className={`leading-[${lineHeight}px] font-mono  tracking-[${letterSpacing}px] text-gray-500 text-[${fontSize}px] w-screen h-screen`}
         ref={preRef}
       >
         {" "}
       </pre>
+      <div className="fixed left-1/2 -translate-x-1/2 bottom-36 ">
+        <Dock
+          items={items}
+          panelHeight={40}
+          baseItemSize={20}
+          magnification={50}
+          className="border-white "
+        />
+      </div>
 
       <Button
+        onClick={captureImage}
         variant="secondary"
         size="lg"
         className="
-    fixed left-1/2 -translate-x-1/2 bottom-8 
+          fixed left-1/2 -translate-x-1/2 bottom-8
+   
+    
+    /* Outer Ring */
     w-24 h-24 rounded-full bg-transparent 
     border-[3px] border-white 
+    p-2 /* This creates the distance between ring and inner circle */
+    
+    /* Resetting Shadcn defaults */
     hover:bg-transparent transition-transform active:scale-95
   "
       >
