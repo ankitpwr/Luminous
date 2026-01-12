@@ -2,31 +2,32 @@ import { useEffect, useRef, useState } from "react";
 
 import "./App.css";
 import { Button } from "./components/ui/button";
-import Dock from "./components/Dock";
-import { CameraIcon, VideoIcon } from "lucide-react";
+import NavBar from "./components/navBar";
+import { RefreshCcw } from "lucide-react";
 
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const preRef = useRef<HTMLPreElement>(null);
+  // prettier-ignore
+  const [asciiChar, setAsciiChars] = useState<String[]>([" ",".","-",",",":","=","+","*","#","%","@"]);
   const fontSize = 12;
   const lineHeight = 8;
   const letterSpacing = 2;
 
-  const items = [
-    {
-      icon: <CameraIcon color="white" size={18} />,
-      label: "camera",
-      onClick: () => alert("camera"),
-      className: "bg-transparent border-transparent hover:border-white",
-    },
-    {
-      icon: <VideoIcon color="white" size={18} />,
-      label: "video",
-      onClick: () => alert("A"),
-      className: "bg-transparent border-transparent hover:border-white",
-    },
-  ];
+  console.log("render", asciiChar);
+
+  function handleFlip() {
+    console.log("handle flip called ", asciiChar);
+    if (asciiChar[0] == " ") {
+      //prettier-ignore
+      const newascii= ["@", "%", "#", "*", "+", "=", ":", ",", "-", "."," "," "," "," "," "," "]
+      setAsciiChars(newascii);
+    } else {
+      const newascii = [" ", ".", "-", ",", ":", "=", "+", "*", "#", "%", "@"];
+      setAsciiChars(newascii);
+    }
+  }
 
   function captureImage() {
     console.log("capture called 1");
@@ -77,19 +78,33 @@ function App() {
     span.style.lineHeight = `${lineHeight}px`;
     span.style.position = "absolute";
     span.style.visibility = "hidden";
-
     document.body.appendChild(span);
     const rect = span.getBoundingClientRect();
     document.body.removeChild(span);
-
-    return {
-      width: Math.ceil(rect.width),
-      height: Math.ceil(rect.height),
-    };
+    return { width: Math.ceil(rect.width), height: Math.ceil(rect.height) };
   }
-
   useEffect(() => {
-    const asciiChar = [" ", ".", "-", ",", ":", "=", "+", "*", "#", "%", "@"];
+    const asciiChar = [
+      "@",
+      "%",
+      "#",
+      "*",
+      "+",
+      "=",
+      ":",
+      ",",
+      "-",
+      ".",
+      " ",
+      " ",
+      " ",
+      " ",
+      " ",
+      " ",
+      " ",
+      " ",
+      " ",
+    ];
     let animationId: number;
     let stream: MediaStream | null;
     async function startCamera() {
@@ -163,33 +178,26 @@ function App() {
       if (animationId) cancelAnimationFrame(animationId);
       if (stream) stream.getTracks().forEach((track) => track.stop());
     };
-  }, []);
+  }, [asciiChar]);
   return (
     <div className=" bg-black w-screen h-screen overflow-hidden">
+      <NavBar />
       <canvas ref={canvasRef} hidden />
       <video ref={videoRef} muted playsInline style={{ display: "none" }} />
+
       <pre
-        className={`leading-[${lineHeight}px] font-mono  tracking-[${letterSpacing}px] text-gray-500 text-[${fontSize}px] w-screen h-screen`}
+        className={`leading-[${lineHeight}px] font-mono tracking-[${letterSpacing}px] text-gray-500 text-[${fontSize}px] w-screen h-screen`}
         ref={preRef}
       >
         {" "}
       </pre>
-      <div className="fixed left-1/2 -translate-x-1/2 bottom-36 ">
-        <Dock
-          items={items}
-          panelHeight={40}
-          baseItemSize={20}
-          magnification={50}
-          className="border-white "
-        />
-      </div>
-
-      <Button
-        onClick={captureImage}
-        variant="secondary"
-        size="lg"
-        className="
-          fixed left-1/2 -translate-x-1/2 bottom-8
+      <div className="fixed left-1/2  bottom-8  flex items-center justify-center gap-8">
+        <Button
+          onClick={captureImage}
+          variant="secondary"
+          size="lg"
+          className="
+       
    
     
     /* Outer Ring */
@@ -198,17 +206,28 @@ function App() {
     p-2 /* This creates the distance between ring and inner circle */
     
     /* Resetting Shadcn defaults */
+    p-2 /* This creates the distance between ring and inner circle */
+    
+    /* Resetting Shadcn defaults */
     hover:bg-transparent transition-transform active:scale-95
   "
-      >
-        <div
-          className="
+        >
+          <div
+            className="
       w-full h-full 
       bg-white rounded-full 
       shadow-md
     "
-        />
-      </Button>
+          />
+        </Button>
+
+        <div
+          onClick={handleFlip}
+          className={`bg-black w-16 h-16 rounded-full flex items-center justify-center border border-amber-400 group cursor-pointer hover:scale-110 duration-150 ease-linear`}
+        >
+          <RefreshCcw size="24" color="white" />
+        </div>
+      </div>
     </div>
   );
 }
