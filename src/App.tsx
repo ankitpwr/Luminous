@@ -4,24 +4,25 @@ import "./App.css";
 import { Button } from "./components/ui/button";
 import NavBar from "./components/navBar";
 import { RefreshCcw } from "lucide-react";
+import Menu from "./components/menu";
+import useSettingStore from "./store/setting-store";
+import SideBar from "./components/sideBar";
 
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const preRef = useRef<HTMLPreElement>(null);
+  const { sidebar, color } = useSettingStore();
   // prettier-ignore
   const [asciiChar, setAsciiChars] = useState<String[]>([" ",".","-",",",":","=","+","*","#","%","@"]);
   const fontSize = 12;
   const lineHeight = 8;
-  const letterSpacing = 2;
-
-  console.log("render", asciiChar);
+  const letterSpacing = 1;
 
   function handleFlip() {
-    console.log("handle flip called ", asciiChar);
     if (asciiChar[0] == " ") {
       //prettier-ignore
-      const newascii= ["@", "%", "#", "*", "+", "=", ":", ",", "-", "."," "," "," "," "," "," "]
+      const newascii= ["@", "%", "#", "*", "+", "=", ":", ",", "-", "."," "," "," "," "," "," ",]
       setAsciiChars(newascii);
     } else {
       const newascii = [" ", ".", "-", ",", ":", "=", "+", "*", "#", "%", "@"];
@@ -48,7 +49,7 @@ function App() {
 
     newctx.font = `${fontSize}px monospace`;
     newctx.textBaseline = "top";
-    newctx.fillStyle = "#6a7282";
+    newctx.fillStyle = `${color}`;
 
     lines.forEach((line, rowIndex) => {
       let x = 0;
@@ -70,10 +71,11 @@ function App() {
   }
 
   function measureCharBox() {
+    if (!preRef.current) return { width: 7, height: 12 };
     const span = document.createElement("span");
     span.textContent = "@";
     span.style.fontFamily = "monospace";
-    span.style.fontSize = `${fontSize - 2}px`;
+    span.style.fontSize = `${fontSize}px`;
     span.style.letterSpacing = `${letterSpacing}px`;
     span.style.lineHeight = `${lineHeight}px`;
     span.style.position = "absolute";
@@ -81,34 +83,16 @@ function App() {
     document.body.appendChild(span);
     const rect = span.getBoundingClientRect();
     document.body.removeChild(span);
-    return { width: Math.ceil(rect.width), height: Math.ceil(rect.height) };
+
+    return { width: Math.floor(rect.width), height: Math.floor(rect.height) };
   }
   useEffect(() => {
-    const asciiChar = [
-      "@",
-      "%",
-      "#",
-      "*",
-      "+",
-      "=",
-      ":",
-      ",",
-      "-",
-      ".",
-      " ",
-      " ",
-      " ",
-      " ",
-      " ",
-      " ",
-      " ",
-      " ",
-      " ",
-    ];
     let animationId: number;
     let stream: MediaStream | null;
     async function startCamera() {
-      stream = await navigator.mediaDevices.getUserMedia({ video: true }); // Asking browser for camera access and Get camera stream
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+      }); // Asking browser for camera access and Get camera stream
       if (!videoRef.current || !canvasRef.current) return;
       videoRef.current.srcObject = stream; //Attach stream to video
       await videoRef.current.play();
@@ -117,6 +101,7 @@ function App() {
       const ctx = canvas.getContext("2d")!;
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+
       async function drawFrame() {
         ctx.drawImage(videoRef.current!, 0, 0, canvas.width, canvas.height);
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -136,10 +121,10 @@ function App() {
         }
 
         let asciiImage = [];
-        const { width: charwidth, height: charheight } = measureCharBox();
-        const blockHeight = charheight;
-        const blockWidth = charwidth;
+        const { width: charW, height: charH } = measureCharBox();
 
+        const blockHeight = charH;
+        const blockWidth = charW;
         for (let i = 0; i < imageData.height; i += blockHeight) {
           let row = "";
 
@@ -166,7 +151,7 @@ function App() {
           asciiImage.push(row);
         }
 
-        // ctx.putImageData(imageData, 0, 0);
+        ctx.putImageData(imageData, 0, 0);
         preRef.current!.textContent = asciiImage.join("\n");
         animationId = requestAnimationFrame(drawFrame);
       }
@@ -186,29 +171,27 @@ function App() {
       <video ref={videoRef} muted playsInline style={{ display: "none" }} />
 
       <pre
-        className={`leading-[${lineHeight}px] font-mono tracking-[${letterSpacing}px] text-gray-500 text-[${fontSize}px] w-screen h-screen`}
+        style={{
+          fontSize: `${fontSize}px`,
+          lineHeight: `${lineHeight}px`,
+          letterSpacing: `${letterSpacing}px`,
+          color: `${color}`,
+        }}
+        className={`font-mono  w-screen h-screen`}
         ref={preRef}
       >
         {" "}
       </pre>
-      <div className="fixed left-1/2  bottom-8  flex items-center justify-center gap-8">
+      <div className="fixed left-1/2  bottom-8  flex items-center justify-center gap-8 overflow-hidden">
         <Button
           onClick={captureImage}
           variant="secondary"
           size="lg"
-          className="
-       
-   
-    
-    /* Outer Ring */
+          className=" cursor-pointer
     w-24 h-24 rounded-full bg-transparent 
     border-[3px] border-white 
     p-2 /* This creates the distance between ring and inner circle */
-    
-    /* Resetting Shadcn defaults */
     p-2 /* This creates the distance between ring and inner circle */
-    
-    /* Resetting Shadcn defaults */
     hover:bg-transparent transition-transform active:scale-95
   "
         >
@@ -223,10 +206,13 @@ function App() {
 
         <div
           onClick={handleFlip}
-          className={`bg-black w-16 h-16 rounded-full flex items-center justify-center border border-amber-400 group cursor-pointer hover:scale-110 duration-150 ease-linear`}
+          className={`bg-black w-16 h-16 rounded-full flex items-center justify-center border border-[#988be9] group cursor-pointer hover:scale-110 duration-150 ease-linear`}
         >
           <RefreshCcw size="24" color="white" />
         </div>
+
+        <Menu />
+        {sidebar && <SideBar />}
       </div>
     </div>
   );
