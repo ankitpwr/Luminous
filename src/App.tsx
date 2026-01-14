@@ -12,22 +12,17 @@ function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const preRef = useRef<HTMLPreElement>(null);
-  const { sidebar, color } = useSettingStore();
+  const { sidebar, color, theme, setTheme } = useSettingStore();
+  const asciiChar = theme;
+
   // prettier-ignore
-  const [asciiChar, setAsciiChars] = useState<String[]>([" ",".","-",",",":","=","+","*","#","%","@"]);
+
   const fontSize = 12;
   const lineHeight = 8;
   const letterSpacing = 1;
 
   function handleFlip() {
-    if (asciiChar[0] == " ") {
-      //prettier-ignore
-      const newascii= ["@", "%", "#", "*", "+", "=", ":", ",", "-", "."," "," "," "," "," "," ",]
-      setAsciiChars(newascii);
-    } else {
-      const newascii = [" ", ".", "-", ",", ":", "=", "+", "*", "#", "%", "@"];
-      setAsciiChars(newascii);
-    }
+    setTheme(theme.reverse());
   }
 
   function captureImage() {
