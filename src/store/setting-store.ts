@@ -14,6 +14,7 @@ interface SettingState {
   fontSize: Number;
   letterSpacing: Number;
   lineHeight: Number;
+  contrast: Number;
 }
 
 interface SettingAction {
@@ -25,6 +26,8 @@ interface SettingAction {
     lineHeight: Number,
     letterSpacing: Number
   ) => void;
+
+  setContrast: (contrast: Number) => void;
 }
 
 type SettingStoreType = SettingState & SettingAction;
@@ -35,7 +38,8 @@ const SettingStore: StateCreator<SettingStoreType> = (set) => ({
   theme: Theme.Normal,
   fontSize: 10,
   lineHeight: 10,
-  letterSpacing: 2,
+  letterSpacing: 1,
+  contrast: 1,
 
   setSidebar: (sidebar: boolean) => set({ sidebar: sidebar }),
   setColor: (color: ColorValue) => set({ color: color }),
@@ -46,6 +50,7 @@ const SettingStore: StateCreator<SettingStoreType> = (set) => ({
       letterSpacing: letterSpacing,
       lineHeight: lineHeight,
     }),
+  setContrast: (contrast: Number) => set({ contrast: contrast }),
 });
 
 const useSettingStore = create<SettingStoreType>(SettingStore);

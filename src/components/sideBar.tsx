@@ -13,7 +13,8 @@ import ElasticSlider from "./ElasticSlider";
 export default function SideBar() {
   const { sidebar, setSidebar, color, setColor } = useSettingStore();
   const { theme, setTheme } = useSettingStore();
-  const { fontSize, letterSpacing, lineHeight, setSize } = useSettingStore();
+  const { fontSize, letterSpacing, lineHeight, setSize, setContrast } =
+    useSettingStore();
   // className={`w-6 h-6 rounded `}
 
   function handleMenu() {
@@ -32,6 +33,9 @@ export default function SideBar() {
   function handleSlider(value: Number) {
     console.log("value is ", value);
     setSize(value, value, 2);
+  }
+  function handleContrast(value: Number) {
+    setContrast(value);
   }
   return (
     <div className="fixed right-0 top-0 h-screen w-[400px] bg-[#232329] border-r  overflow-hidden flex flex-col  pt-8 ">
@@ -94,13 +98,6 @@ export default function SideBar() {
       <div className="flex flex-col justify-center px-5 gap-2 py-4 ">
         <p className="text-white text-[14px]">Resolution</p>
         <div className="flex items-center justify-start">
-          {/* <Slider
-            defaultValue={[10]}
-            max={18}
-            step={1}
-            min={8}
-            className={`w-60`}
-          /> */}
           <ElasticSlider
             rightIcon={<PlusCircle size="16" color="white" />}
             leftIcon={<MinusCircle size="16" color="white" />}
@@ -110,6 +107,24 @@ export default function SideBar() {
             isStepped
             stepSize={1}
             onChange={handleSlider}
+          />
+        </div>
+      </div>
+
+      <div className="w-full h-px bg-[#2d2c37] rounded-full"></div>
+
+      <div className="flex flex-col justify-center px-5 gap-2 py-4 ">
+        <p className="text-white text-[14px]">Contrast</p>
+        <div className="flex items-center justify-start">
+          <ElasticSlider
+            rightIcon={<PlusCircle size="16" color="white" />}
+            leftIcon={<MinusCircle size="16" color="white" />}
+            startingValue={0.5}
+            defaultValue={1}
+            maxValue={3}
+            isStepped
+            stepSize={0.1}
+            onChange={handleContrast}
           />
         </div>
       </div>
