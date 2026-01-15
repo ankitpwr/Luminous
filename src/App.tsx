@@ -13,13 +13,10 @@ function App() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const preRef = useRef<HTMLPreElement>(null);
   const { sidebar, color, theme, setTheme } = useSettingStore();
+  const { fontSize, letterSpacing, lineHeight } = useSettingStore();
   const asciiChar = theme;
 
   // prettier-ignore
-
-  const fontSize = 12;
-  const lineHeight = 8;
-  const letterSpacing = 1;
 
   function handleFlip() {
     setTheme(theme.reverse());
@@ -158,7 +155,7 @@ function App() {
       if (animationId) cancelAnimationFrame(animationId);
       if (stream) stream.getTracks().forEach((track) => track.stop());
     };
-  }, [asciiChar]);
+  }, [asciiChar, fontSize, lineHeight, letterSpacing, sidebar, color, theme]);
   return (
     <div className=" bg-black w-screen h-screen overflow-hidden">
       <NavBar />
@@ -187,7 +184,7 @@ function App() {
     border-[3px] border-white 
     p-2 /* This creates the distance between ring and inner circle */
     p-2 /* This creates the distance between ring and inner circle */
-    hover:bg-transparent transition-transform active:scale-95
+    hover:bg-transparent transition-transform active:scale-95 
   "
         >
           <div
