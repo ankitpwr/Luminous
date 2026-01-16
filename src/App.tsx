@@ -116,7 +116,7 @@ function App() {
           //   `number(contrast) is ${Number(contrast)}`
           // );
 
-          gray = Math.min((distance + 0.5) * 255, 255);
+          gray = Math.max(0, Math.min((distance + 0.5) * 255, 255));
           // console.log(`new grayscale value `, gray);
 
           data[i] = gray; // R
@@ -155,7 +155,7 @@ function App() {
           asciiImage.push(row);
         }
 
-        ctx.putImageData(imageData, 0, 0);
+        // ctx.putImageData(imageData, 0, 0);
         preRef.current!.textContent = asciiImage.join("\n");
         animationId = requestAnimationFrame(drawFrame);
       }

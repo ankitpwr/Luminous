@@ -1,5 +1,13 @@
 import useSettingStore from "@/store/setting-store";
-import { MinusCircle, PlusCircle, X } from "lucide-react";
+import {
+  AtSign,
+  Binary,
+  BlocksIcon,
+  Grip,
+  MinusCircle,
+  PlusCircle,
+  X,
+} from "lucide-react";
 
 import {
   Colors,
@@ -7,14 +15,14 @@ import {
   type ThemeValue,
   type ColorValue,
 } from "../lib/styletypes";
-import { Slider } from "./ui/slider";
+
 import ElasticSlider from "./ElasticSlider";
+import { NormalFontFamilyIcon } from "@/lib/svg";
 
 export default function SideBar() {
-  const { sidebar, setSidebar, color, setColor } = useSettingStore();
+  const { setSidebar, color, setColor } = useSettingStore();
   const { theme, setTheme } = useSettingStore();
-  const { fontSize, letterSpacing, lineHeight, setSize, setContrast } =
-    useSettingStore();
+  const { setSize, setContrast } = useSettingStore();
   // className={`w-6 h-6 rounded `}
 
   function handleMenu() {
@@ -30,17 +38,18 @@ export default function SideBar() {
     setTheme(value);
   }
 
-  function handleSlider(value: Number) {
+  function handleSlider(value: number) {
     console.log("value is ", value);
-    setSize(value, value, 2);
+
+    setSize(value, value - 1, 2);
   }
   function handleContrast(value: Number) {
     setContrast(value);
   }
   return (
-    <div className="fixed right-0 top-0 h-screen w-[400px] bg-[#232329] border-r  overflow-hidden flex flex-col  pt-8 ">
-      <div className="flex items-center justify-between px-5 pb-8">
-        <h1 className="font-press-start text-2xl text-[#F4EEFF]">Settings</h1>
+    <div className="fixed right-4 top-20  w-[400px] bg-[#101010]  rounded overflow-hidden flex flex-col  pt-4">
+      <div className="flex items-center justify-between px-4 pb-6">
+        <h1 className="font- text-3xl text-white">Settings</h1>
         <X
           onClick={handleMenu}
           size={32}
@@ -72,24 +81,41 @@ export default function SideBar() {
         </div>
       </div>
 
-      <div className="w-full h-px bg-[#2d2c37] rounded-full"></div>
-
       <div className="flex flex-col justify-center px-5 gap-2 py-4 ">
         <p className="text-white text-[14px]">Styles</p>
         <div className="flex items-center gap-3">
-          {Object.entries(Theme)
-            .filter(([key, value]) => key != "flip")
-            .map(([key, value], index) => {
-              return (
-                <div
-                  key={index}
-                  onClick={() => handleTheme(value)}
-                  className={`py-[7px] w-24 border border-[#ff4533] hover:bg-[#ff4533]  ease-in-out duration-100 flex items-center justify-center rounded text-white text-sm cursor-pointer`}
-                >
-                  <span>{key}</span>
-                </div>
-              );
-            })}
+          <div
+            className={`border-[2px] border-gray-800 p-2 cursor-pointer rounded-[8px]
+                ${theme == Theme.Normal ? "border-white" : ""}
+              `}
+            onClick={() => handleTheme(Theme.Normal)}
+          >
+            <AtSign color="white" />
+          </div>
+          <div
+            className={`border-[2px] border-gray-800 p-2 cursor-pointer rounded-[8px]
+                ${theme == Theme.Dot ? "border-white" : ""}
+              `}
+            onClick={() => handleTheme(Theme.Dot)}
+          >
+            <Grip color="white" />
+          </div>
+          <div
+            className={`border-[2px] border-gray-800 p-2 cursor-pointer rounded-[8px]
+                ${theme == Theme.Matrix ? "border-white" : ""}
+              `}
+            onClick={() => handleTheme(Theme.Matrix)}
+          >
+            <Binary color="white" />
+          </div>
+          <div
+            className={`border-[2px] border-gray-800 p-2 cursor-pointer rounded-[8px]
+                ${theme == Theme.Blocky ? "border-white" : ""}
+              `}
+            onClick={() => handleTheme(Theme.Blocky)}
+          >
+            <BlocksIcon color="white" />
+          </div>
         </div>
       </div>
 
@@ -110,8 +136,6 @@ export default function SideBar() {
           />
         </div>
       </div>
-
-      <div className="w-full h-px bg-[#2d2c37] rounded-full"></div>
 
       <div className="flex flex-col justify-center px-5 gap-2 py-4 ">
         <p className="text-white text-[14px]">Contrast</p>

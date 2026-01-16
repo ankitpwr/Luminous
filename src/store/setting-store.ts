@@ -37,9 +37,9 @@ const SettingStore: StateCreator<SettingStoreType> = (set) => ({
   color: Colors.Grey,
   theme: Theme.Normal,
   fontSize: 10,
-  lineHeight: 10,
+  lineHeight: 9,
   letterSpacing: 1,
-  contrast: 1,
+  contrast: 1.4,
 
   setSidebar: (sidebar: boolean) => set({ sidebar: sidebar }),
   setColor: (color: ColorValue) => set({ color: color }),
