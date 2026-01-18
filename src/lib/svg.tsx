@@ -50,24 +50,19 @@ export function TwitterIcon({ color = "currentColor", size = 24 }: IconProps) {
   );
 }
 
-export function ColorModeSvg() {
+export function ColorModeSvg({ color = "currentColor", size = 24 }: IconProps) {
   return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4">
-      <circle cx="12" cy="12" r="10" fill="url(#grad)" />
-      <defs>
-        <linearGradient id="grad">
-          <stop offset="0%" stopColor="#ff0080" />
-          <stop offset="100%" stopColor="#00ffcc" />
-        </linearGradient>
-      </defs>
-    </svg>
-  );
-}
-
-export function GrayscaleSvg() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4">
-      <circle cx="12" cy="12" r="10" fill="#9ca3af" />
+    <svg
+      fill={color}
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M4,14 C4,11.0544813 6.66666667,7.05448133 12,2 C17.3333333,7.05448133 20,11.0544813 20,14 C20,18.3349143 16.5521622,21.8645429 12.2491793,21.9961932 L12,22 C7.581722,22 4,18.418278 4,14 Z M12,4.793 L11.7832437,5.01193635 C7.89798368,8.95774552 6,12.0287291 6,14 C6,17.3137085 8.6862915,20 12,20 L12,4.793 Z"
+      />
     </svg>
   );
 }
