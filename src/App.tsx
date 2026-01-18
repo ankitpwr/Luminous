@@ -7,12 +7,16 @@ import { RefreshCcw } from "lucide-react";
 import Menu from "./components/menu";
 import useSettingStore from "./store/setting-store";
 import SideBar from "./components/sideBar";
+import { downScaleGrayscaleImage, grayscaleValue } from "./lib/grayscale";
+import { image } from "motion/react-m";
+import { downScaleColorImage } from "./lib/colorImage";
 
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const preRef = useRef<HTMLPreElement>(null);
-  const { sidebar, color, theme, setTheme } = useSettingStore();
+  const asciiCanvasRef = useRef<HTMLCanvasElement>(null);
+  const { sidebar, color, theme, colorTheme, setTheme } = useSettingStore();
   const { fontSize, letterSpacing, lineHeight, contrast } = useSettingStore();
   const asciiChar = theme;
 
@@ -91,6 +95,8 @@ function App() {
       await videoRef.current.play();
 
       const canvas = canvasRef.current;
+      const asciiCanvas = asciiCanvasRef.current;
+
       const ctx = canvas.getContext("2d")!;
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -100,63 +106,37 @@ function App() {
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
         //grayscale logic
-        const data = imageData.data;
-
-        for (let i = 0; i < data.length; i += 4) {
-          let r = data[i];
-          let g = data[i + 1];
-          let b = data[i + 2];
-          let gray: number = 0.299 * r + 0.587 * g + 0.114 * b;
-          // console.log(`previous greyscale value `, gray);
-          const normalize = gray / 255;
-          let distance = normalize - 0.5;
-          distance = distance * Number(contrast);
-          // console.log(
-          //   `contrast is ${contrast} `,
-          //   `number(contrast) is ${Number(contrast)}`
-          // );
-
-          gray = Math.max(0, Math.min((distance + 0.5) * 255, 255));
-          // console.log(`new grayscale value `, gray);
-
-          data[i] = gray; // R
-          data[i + 1] = gray; // G
-          data[i + 2] = gray; // B
-        }
-
-        let asciiImage = [];
+        let data = imageData.data;
         const { width: charW, height: charH } = measureCharBox();
-
         const blockHeight = charH;
         const blockWidth = charW;
-        for (let i = 0; i < imageData.height; i += blockHeight) {
-          let row = "";
-
-          for (let j = 0; j < imageData.width; j += blockWidth) {
-            let sum = 0;
-            let count = 0;
-
-            for (let x = 0; x < blockHeight; x++) {
-              for (let y = 0; y < blockWidth; y++) {
-                const px = j + y;
-                const py = i + x;
-
-                if (px >= canvas.width || py >= canvas.height) continue;
-
-                const index = (py * canvas.width + px) * 4;
-                sum += data[index]; // grayscale value (R channel)
-                count++;
-              }
-            }
-            const avg = sum / count;
-            const charIndex = Math.floor((avg / 255) * (asciiChar.length - 1));
-            row += asciiChar[charIndex];
+        if (!colorTheme) {
+          // active for grayscale image
+          data = grayscaleValue(data, contrast);
+          const asciiImage = downScaleGrayscaleImage(
+            imageData,
+            blockHeight,
+            blockWidth,
+            asciiChar,
+            data,
+            canvas,
+          );
+          preRef.current!.textContent = asciiImage.join("\n");
+        } else {
+          if (asciiCanvas) {
+            downScaleColorImage(
+              imageData,
+              blockHeight,
+              blockWidth,
+              asciiChar,
+              data,
+              canvas,
+              asciiCanvas,
+              fontSize,
+            );
           }
-          asciiImage.push(row);
         }
 
-        // ctx.putImageData(imageData, 0, 0);
-        preRef.current!.textContent = asciiImage.join("\n");
         animationId = requestAnimationFrame(drawFrame);
       }
       drawFrame();
@@ -172,21 +152,31 @@ function App() {
     <div className=" bg-black w-screen h-screen overflow-hidden">
       <NavBar />
       <canvas ref={canvasRef} hidden />
+      {colorTheme == true ? (
+        <canvas ref={asciiCanvasRef} />
+      ) : (
+        <pre
+          style={{
+            fontSize: `${fontSize}px`,
+            lineHeight: `${lineHeight}px`,
+            letterSpacing: `${letterSpacing}px`,
+            color: `${color}`,
+          }}
+          className={`font-mono  w-screen h-screen`}
+          ref={preRef}
+        >
+          {" "}
+        </pre>
+      )}
       <video ref={videoRef} muted playsInline style={{ display: "none" }} />
-
-      <pre
-        style={{
-          fontSize: `${fontSize}px`,
-          lineHeight: `${lineHeight}px`,
-          letterSpacing: `${letterSpacing}px`,
-          color: `${color}`,
-        }}
-        className={`font-mono  w-screen h-screen`}
-        ref={preRef}
+      <div
+        onClick={handleFlip}
+        className={`bg-black w-12 h-12 fixed bottom-4 left-[42%]  rounded-full flex items-center justify-center border border-[#988be9] cursor-pointer hover:scale-110 duration-150 ease-linear`}
       >
-        {" "}
-      </pre>
-      <div className="fixed left-1/2  bottom-8  flex items-center justify-center gap-8 overflow-hidden">
+        <RefreshCcw size="24" color="white" />
+      </div>
+
+      <div className="fixed left-1/2  bottom-4   -translate-x-1/2   flex items-center justify-center gap-8 overflow-hidden">
         <Button
           onClick={captureImage}
           variant="secondary"
@@ -194,9 +184,7 @@ function App() {
           className=" cursor-pointer
     w-24 h-24 rounded-full bg-transparent 
     border-[3px] border-white 
-    p-2 /* This creates the distance between ring and inner circle */
-    p-2 /* This creates the distance between ring and inner circle */
-    hover:bg-transparent transition-transform active:scale-95 
+    p-2 hover:bg-transparent transition-transform active:scale-95 
   "
         >
           <div
@@ -207,17 +195,10 @@ function App() {
     "
           />
         </Button>
-
-        <div
-          onClick={handleFlip}
-          className={`bg-black w-16 h-16 rounded-full flex items-center justify-center border border-[#988be9] group cursor-pointer hover:scale-110 duration-150 ease-linear`}
-        >
-          <RefreshCcw size="24" color="white" />
-        </div>
-
-        <Menu />
-        {sidebar && <SideBar />}
       </div>
+
+      <Menu />
+      {sidebar && <SideBar />}
     </div>
   );
 }

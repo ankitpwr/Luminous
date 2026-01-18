@@ -134,9 +134,9 @@ const Slider: React.FC<SliderProps> = ({
   return (
     <>
       <motion.div
-        onHoverStart={() => animate(scale, 1.08)}
+        onHoverStart={() => animate(scale, 1.06)}
         onHoverEnd={() => animate(scale, 1)}
-        onTouchStart={() => animate(scale, 1.08)}
+        onTouchStart={() => animate(scale, 1.06)}
         onTouchEnd={() => animate(scale, 1)}
         style={{
           scale,
@@ -151,7 +151,7 @@ const Slider: React.FC<SliderProps> = ({
           }}
           style={{
             x: useTransform(() =>
-              region === "left" ? -overflow.get() / scale.get() : 0
+              region === "left" ? -overflow.get() / scale.get() : 0,
             ),
           }}
         >
@@ -189,9 +189,9 @@ const Slider: React.FC<SliderProps> = ({
             }}
             className="flex flex-grow"
           >
-            <div className="relative h-full flex-grow overflow-hidden rounded-full bg-gray-400">
+            <div className="relative h-full flex-grow overflow-hidden rounded-full bg-gray-700">
               <div
-                className="absolute h-full bg-gray-500 rounded-full"
+                className="absolute h-full bg-white rounded-full"
                 style={{ width: `${getRangePercentage()}%` }}
               />
             </div>
@@ -205,14 +205,14 @@ const Slider: React.FC<SliderProps> = ({
           }}
           style={{
             x: useTransform(() =>
-              region === "right" ? overflow.get() / scale.get() : 0
+              region === "right" ? overflow.get() / scale.get() : 0,
             ),
           }}
         >
           {rightIcon}
         </motion.div>
       </motion.div>
-      <p className="absolute text-gray-400 transform -translate-y-4 text-xs font-medium tracking-wide">
+      <p className="absolute text-white transform -translate-y-4 text-xs font-medium tracking-wide">
         {Math.round(value)}
       </p>
     </>
