@@ -4,6 +4,7 @@ import { RefreshCcw } from "lucide-react";
 import { ColorModeSvg } from "@/lib/svg";
 import type { RefObject } from "react";
 import { measureCharBox } from "@/lib/measureCharBox";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 export default function ActionPanel({
   preRef,
@@ -84,24 +85,37 @@ export default function ActionPanel({
     "
         />
       </Button>
-      <div
-        onClick={handleFlip}
-        className={`bg-black w-12 h-12   rounded-full flex items-center justify-center border border-white cursor-pointer hover:scale-110 duration-150 ease-in-out`}
-      >
-        <RefreshCcw size="24" color="white" />
-      </div>
-
-      <div
-        onClick={handleColorMode}
-        className={`bg-black w-12 h-12   rounded-full flex items-center justify-center border  cursor-pointer hover:scale-110 duration-150 ease-in-out
+      <Tooltip>
+        <TooltipTrigger>
+          <div
+            onClick={handleFlip}
+            className={`bg-black w-12 h-12   rounded-full flex items-center justify-center border border-white cursor-pointer hover:scale-110 duration-150 ease-in-out`}
+          >
+            <RefreshCcw size="24" color="white" />
+          </div>
+        </TooltipTrigger>
+        <TooltipContent className="bg-white text-black ">
+          <p>Flip</p>
+        </TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger>
+          <div
+            onClick={handleColorMode}
+            className={`bg-black w-12 h-12   rounded-full flex items-center justify-center border  cursor-pointer hover:scale-110 duration-150 ease-in-out
              ${colorTheme == true ? "border-[#5227ff]" : "border-white"}
             `}
-      >
-        <ColorModeSvg
-          size={24}
-          color={colorTheme == true ? "#5227ff" : "white"}
-        />
-      </div>
+          >
+            <ColorModeSvg
+              size={24}
+              color={colorTheme == true ? "#5227ff" : "white"}
+            />
+          </div>
+        </TooltipTrigger>
+        <TooltipContent className="bg-white text-black ">
+          <p>Color Mode</p>
+        </TooltipContent>
+      </Tooltip>
     </div>
   );
 }

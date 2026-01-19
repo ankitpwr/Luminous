@@ -71,6 +71,7 @@ function App() {
               canvas,
               asciiCanvas,
               fontSize,
+              contrast
             );
           }
         }

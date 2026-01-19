@@ -1,4 +1,4 @@
-export function grayscaleValue(data: ImageDataArray, contrast: Number) {
+export function grayscaleValue(data: ImageDataArray, contrast: number) {
   for (let i = 0; i < data.length; i += 4) {
     let r = data[i];
     let g = data[i + 1];
@@ -7,7 +7,7 @@ export function grayscaleValue(data: ImageDataArray, contrast: Number) {
 
     const normalize = gray / 255;
     let distance = normalize - 0.5;
-    distance = distance * Number(contrast);
+    distance = distance * contrast;
 
     gray = Math.max(0, Math.min((distance + 0.5) * 255, 255));
 

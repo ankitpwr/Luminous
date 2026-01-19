@@ -1,7 +1,7 @@
 export function measureCharBox(
-  fontSize: Number,
-  letterSpacing: Number,
-  lineHeight: Number,
+  fontSize: number,
+  letterSpacing: number,
+  lineHeight: number,
 ) {
   const span = document.createElement("span");
   span.textContent = "@";

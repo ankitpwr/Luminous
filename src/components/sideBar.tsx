@@ -50,7 +50,7 @@ export default function SideBar() {
 
     setSize(value, value, 2);
   }
-  function handleContrast(value: Number) {
+  function handleContrast(value: number) {
     setContrast(value);
   }
   return (

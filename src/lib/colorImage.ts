@@ -8,7 +8,8 @@ export function downScaleColorImage(
   data: ImageDataArray,
   srcCanvas: HTMLCanvasElement,
   asciiCanvas: HTMLCanvasElement,
-  fontSize: Number,
+  fontSize: number,
+  contrast: number,
 ) {
   asciiCanvas.width = srcCanvas.width;
   asciiCanvas.height = srcCanvas.height;
@@ -43,10 +44,28 @@ export function downScaleColorImage(
       const avgG = sumG / count;
       const avgB = sumB / count;
       const luminance = 0.299 * avgR + 0.587 * avgG + 0.114 * avgB;
-      const charIndex = Math.floor((luminance / 255) * (asciiChar.length - 1));
+      const constrastLuminous = contrastValue(luminance, contrast);
+      const scale = constrastLuminous / (luminance + 1e-6);
 
-      asciiCtx.fillStyle = `rgb(${avgR},${avgG},${avgB})`;
+      const cr = Math.min(255, Math.max(0, avgR * scale));
+      const cg = Math.min(255, Math.max(0, avgG * scale));
+      const cb = Math.min(255, Math.max(0, avgB * scale));
+
+      const charIndex = Math.floor(
+        (constrastLuminous / 255) * (asciiChar.length - 1),
+      );
+
+      asciiCtx.fillStyle = `rgb(${cr},${cg},${cb})`;
       asciiCtx.fillText(String(asciiChar[charIndex]), j, i);
     }
   }
+}
+function contrastValue(val: number, contrast: number): number {
+  const normalize = val / 255;
+  let distance = normalize - 0.5;
+  distance = distance * contrast;
+
+  val = Math.max(0, Math.min((distance + 0.5) * 255, 255));
+
+  return val;
 }

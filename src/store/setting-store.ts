@@ -11,10 +11,10 @@ interface SettingState {
   sidebar: boolean;
   color: ColorValue;
   theme: ThemeValue;
-  fontSize: Number;
-  letterSpacing: Number;
-  lineHeight: Number;
-  contrast: Number;
+  fontSize: number;
+  letterSpacing: number;
+  lineHeight: number;
+  contrast: number;
   colorTheme: boolean;
 }
 
@@ -23,12 +23,12 @@ interface SettingAction {
   setColor: (color: ColorValue) => void;
   setTheme: (theme: ThemeValue) => void;
   setSize: (
-    fontsize: Number,
-    lineHeight: Number,
-    letterSpacing: Number,
+    fontsize: number,
+    lineHeight: number,
+    letterSpacing: number,
   ) => void;
 
-  setContrast: (contrast: Number) => void;
+  setContrast: (contrast: number) => void;
   setColorTheme: (colorTheme: boolean) => void;
 }
 
@@ -47,13 +47,13 @@ const SettingStore: StateCreator<SettingStoreType> = (set) => ({
   setSidebar: (sidebar: boolean) => set({ sidebar: sidebar }),
   setColor: (color: ColorValue) => set({ color: color }),
   setTheme: (theme: ThemeValue) => set({ theme: theme }),
-  setSize: (fontsize: Number, lineHeight: Number, letterSpacing: Number) =>
+  setSize: (fontsize: number, lineHeight: number, letterSpacing: number) =>
     set({
       fontSize: fontsize,
       letterSpacing: letterSpacing,
       lineHeight: lineHeight,
     }),
-  setContrast: (contrast: Number) => set({ contrast: contrast }),
+  setContrast: (contrast: number) => set({ contrast: contrast }),
   setColorTheme: (colorTheme: boolean) => set({ colorTheme: colorTheme }),
 });
 
