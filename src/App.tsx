@@ -113,7 +113,7 @@ function App() {
             letterSpacing: `${letterSpacing}px`,
             color: `${color}`,
           }}
-          className={`font-mono  w-screen h-screen`}
+          className={`font-mono font-bold  w-screen h-screen`}
           ref={preRef}
         >
           {" "}

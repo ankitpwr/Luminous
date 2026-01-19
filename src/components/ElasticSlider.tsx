@@ -110,6 +110,7 @@ const Slider: React.FC<SliderProps> = ({
         newValue = Math.round(newValue / stepSize) * stepSize;
       }
       newValue = Math.min(Math.max(newValue, startingValue), maxValue);
+
       setValue(newValue);
       if (onChange) onChange(newValue);
       clientX.jump(e.clientX);
@@ -213,7 +214,7 @@ const Slider: React.FC<SliderProps> = ({
         </motion.div>
       </motion.div>
       <p className="absolute text-white transform -translate-y-4 text-xs font-medium tracking-wide">
-        {Math.round(value)}
+        {Math.round(value * 10) / 10}
       </p>
     </>
   );

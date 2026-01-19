@@ -48,9 +48,10 @@ export default function SideBar() {
   function handleSlider(value: number) {
     console.log("value is ", value);
 
-    setSize(value, value, 2);
+    setSize(value, value - 1, 2);
   }
   function handleContrast(value: number) {
+    console.log("value is ", value);
     setContrast(value);
   }
   return (
@@ -136,7 +137,7 @@ export default function SideBar() {
             rightIcon={<PlusCircle size="16" color="white" />}
             leftIcon={<MinusCircle size="16" color="white" />}
             startingValue={0.5}
-            defaultValue={1}
+            defaultValue={1.5}
             maxValue={3}
             isStepped
             stepSize={0.1}
