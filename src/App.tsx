@@ -12,10 +12,9 @@ import ActionPanel from "./components/actionPanel";
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const preRef = useRef<HTMLPreElement>(null);
+
   const asciiCanvasRef = useRef<HTMLCanvasElement>(null);
-  const { sidebar, color, theme, colorTheme, setTheme, setColorTheme } =
-    useSettingStore();
+  const { sidebar, color, theme, colorTheme } = useSettingStore();
   const { fontSize, letterSpacing, lineHeight, contrast } = useSettingStore();
   const asciiChar = theme;
 
@@ -28,7 +27,7 @@ function App() {
       stream = await navigator.mediaDevices.getUserMedia({
         video: true,
       }); // Asking browser for camera access and Get camera stream
-      if (!videoRef.current || !canvasRef.current) return;
+      if (!videoRef.current || !canvasRef.current || !asciiCanvasRef.current) return;
       videoRef.current.srcObject = stream; //Attach stream to video
       await videoRef.current.play();
 
@@ -48,21 +47,23 @@ function App() {
         const { width: charW, height: charH } = measureCharBox(fontSize, letterSpacing, lineHeight);
         const blockHeight = charH;
         const blockWidth = charW;
-        if (!colorTheme) {
-          // active for grayscale image
+        if (!colorTheme && asciiCanvas) {
+       
           data = grayscaleValue(data, contrast);
-          const asciiImage = downScaleGrayscaleImage(
+          downScaleGrayscaleImage(
             imageData,
             blockHeight,
             blockWidth,
             asciiChar,
             data,
             canvas,
+            asciiCanvas,
+            fontSize,
+            contrast
           );
-          preRef.current!.textContent = asciiImage.join("\n");
-        } else {
-          if (asciiCanvas) {
-            downScaleColorImage(
+         
+        } else if(colorTheme && asciiCanvas) {
+          downScaleColorImage(
               imageData,
               blockHeight,
               blockWidth,
@@ -73,7 +74,7 @@ function App() {
               fontSize,
               contrast
             );
-          }
+          
         }
 
         animationId = requestAnimationFrame(drawFrame);
@@ -100,25 +101,10 @@ function App() {
     <div className=" bg-black w-screen h-screen overflow-hidden">
       <NavBar />
       <Menu />
-      <ActionPanel preRef={preRef} />
+      <ActionPanel />
       <video ref={videoRef} muted playsInline style={{ display: "none" }} />
       <canvas ref={canvasRef} hidden />
-      {colorTheme == true ? (
-        <canvas ref={asciiCanvasRef} />
-      ) : (
-        <pre
-          style={{
-            fontSize: `${fontSize}px`,
-            lineHeight: `${lineHeight}px`,
-            letterSpacing: `${letterSpacing}px`,
-            color: `${color}`,
-          }}
-          className={`font-mono font-bold  w-screen h-screen`}
-          ref={preRef}
-        >
-          {" "}
-        </pre>
-      )}
+      <canvas ref={asciiCanvasRef} />
 
       {sidebar && <SideBar />}
     </div>

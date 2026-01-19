@@ -6,14 +6,10 @@ import type { RefObject } from "react";
 import { measureCharBox } from "@/lib/measureCharBox";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
-export default function ActionPanel({
-  preRef,
-}: {
-  preRef: RefObject<HTMLPreElement | null>;
-}) {
+export default function ActionPanel() {
   const { sidebar, color, theme, colorTheme, setTheme, setColorTheme } =
     useSettingStore();
-  const { fontSize, letterSpacing, lineHeight, contrast } = useSettingStore();
+  // const { fontSize, letterSpacing, lineHeight, contrast } = useSettingStore();
   function handleFlip() {
     setTheme(theme.reverse());
   }
@@ -25,45 +21,14 @@ export default function ActionPanel({
   function captureImage() {
     console.log("capture called 1");
 
-    if (!preRef.current) return;
-
-    const newCanvas = document.createElement("canvas");
-    const newctx = newCanvas.getContext("2d");
-    if (!newctx) return;
-    const lines = preRef.current.textContent.replace(/\r\n/g, "\n").split("\n");
-    const { width: charWidth, height: charHeight } = measureCharBox(
-      fontSize,
-      letterSpacing,
-      lineHeight,
-    );
-    const cols = Math.max(...lines.map((l) => l.length));
-    const rows = lines.length;
-    newCanvas.height = rows * charHeight;
-    newCanvas.width = cols * charWidth;
-    newctx!.fillStyle = "black";
-    newctx?.fillRect(0, 0, newCanvas.width, newCanvas.height);
-
-    newctx.font = `${fontSize}px monospace`;
-    newctx.textBaseline = "top";
-    newctx.fillStyle = `${color}`;
-
-    lines.forEach((line, rowIndex) => {
-      let x = 0;
-      const y = rowIndex * charHeight;
-      for (let i = 0; i < line.length; i++) {
-        newctx.fillText(line[i], x, y);
-        x += charWidth;
-      }
-    });
-
-    const dataUrl = newCanvas.toDataURL("image/png");
-    console.log(dataUrl);
-    const link = document.createElement("a");
-    link.href = dataUrl;
-    link.download = `luminous-ascii${Date.now()}.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // const dataUrl = newCanvas.toDataURL("image/png");
+    // console.log(dataUrl);
+    // const link = document.createElement("a");
+    // link.href = dataUrl;
+    // link.download = `luminous-ascii${Date.now()}.png`;
+    // document.body.appendChild(link);
+    // link.click();
+    // document.body.removeChild(link);
   }
   return (
     <div className="fixed left-1/2  bottom-4 px-2     flex items-center justify-center gap-8 overflow-hidden">

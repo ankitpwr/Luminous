@@ -48,7 +48,7 @@ export default function SideBar() {
   function handleSlider(value: number) {
     console.log("value is ", value);
 
-    setSize(value, value - 1, 2);
+    setSize(value, value, 2);
   }
   function handleContrast(value: number) {
     console.log("value is ", value);

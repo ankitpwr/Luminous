@@ -2,9 +2,9 @@ import GradientText from "./reactBits/GradientText";
 
 export default function NavBar() {
   return (
-    <div className=" fixed left-4 top-4  ">
+    <div className=" fixed left-6 top-6  ">
       <GradientText animationSpeed={3} pauseOnHover showBorder className="">
-        <span className="font-montserrat text-xl font-bold ">Luminous</span>
+        <span className="font-montserrat text-2xl font-bold ">Luminous</span>
       </GradientText>
     </div>
   );
