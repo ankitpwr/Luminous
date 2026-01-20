@@ -15,7 +15,8 @@ function App() {
 
   const asciiCanvasRef = useRef<HTMLCanvasElement>(null);
   const { sidebar, color, theme, colorTheme } = useSettingStore();
-  const { fontSize, letterSpacing, lineHeight, contrast } = useSettingStore();
+  const { fontSize, letterSpacing, lineHeight, contrast, brightness } =
+    useSettingStore();
   const asciiChar = theme;
 
   // prettier-ignore
@@ -49,7 +50,7 @@ function App() {
         const blockWidth = charW;
         if (!colorTheme && asciiCanvas) {
        
-          data = grayscaleValue(data, contrast);
+          data = grayscaleValue(data, contrast, brightness);
           downScaleGrayscaleImage(
             imageData,
             blockHeight,
@@ -59,7 +60,9 @@ function App() {
             canvas,
             asciiCanvas,
             fontSize,
-            contrast
+            contrast,
+            color,
+          
           );
          
         } else if(colorTheme && asciiCanvas) {
@@ -72,7 +75,8 @@ function App() {
               canvas,
               asciiCanvas,
               fontSize,
-              contrast
+              contrast,
+              brightness
             );
           
         }
@@ -96,12 +100,13 @@ function App() {
     color,
     theme,
     colorTheme,
+    brightness
   ]);
   return (
     <div className=" bg-black w-screen h-screen overflow-hidden">
       <NavBar />
       <Menu />
-      <ActionPanel />
+      <ActionPanel asciiCanvas={asciiCanvasRef.current} />
       <video ref={videoRef} muted playsInline style={{ display: "none" }} />
       <canvas ref={canvasRef} hidden />
       <canvas ref={asciiCanvasRef} />

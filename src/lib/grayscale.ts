@@ -1,15 +1,22 @@
-export function grayscaleValue(data: ImageDataArray, contrast: number) {
+import type { ColorValue } from "./styletypes";
+
+export function grayscaleValue(
+  data: ImageDataArray,
+  contrast: number,
+  brightness: number,
+) {
   for (let i = 0; i < data.length; i += 4) {
     let r = data[i];
     let g = data[i + 1];
     let b = data[i + 2];
     let gray: number = 0.299 * r + 0.587 * g + 0.114 * b;
 
-    const normalize = gray / 255;
-    let distance = normalize - 0.5;
-    distance = distance * contrast;
+    let normalize = gray / 255;
+    normalize = normalize + brightness;
+    let distance = (normalize - 0.5) * contrast + 0.5;
+    distance = Math.max(0, Math.min(1, distance));
 
-    gray = Math.max(0, Math.min((distance + 0.5) * 255, 255));
+    gray = Math.max(0, Math.min(distance * 255, 255));
 
     data[i] = gray; // R
     data[i + 1] = gray; // G
@@ -28,6 +35,7 @@ export function downScaleGrayscaleImage(
   asciiCanvas: HTMLCanvasElement,
   fontSize: number,
   contrast: number,
+  color: ColorValue,
 ) {
   asciiCanvas.width = srcCanvas.width;
   asciiCanvas.height = srcCanvas.height;
@@ -36,7 +44,6 @@ export function downScaleGrayscaleImage(
   asciiCtx.fillRect(0, 0, asciiCanvas.width, asciiCanvas.height);
   asciiCtx.font = `${fontSize}px monospace`;
   asciiCtx.textBaseline = "top";
-  asciiCtx.fillStyle = "white";
 
   for (let i = 0; i < imageData.height; i += blockHeight) {
     for (let j = 0; j < imageData.width; j += blockWidth) {
@@ -57,7 +64,8 @@ export function downScaleGrayscaleImage(
       }
       const avg = sum / count;
       const charIndex = Math.floor((avg / 255) * (asciiChar.length - 1));
-      asciiCtx.fillStyle = `rgb(${avg},${avg},${avg})`;
+      asciiCtx.fillStyle =
+        color == "#6a7282" ? `rgb(${avg},${avg},${avg})` : color;
       asciiCtx.fillText(String(asciiChar[charIndex]), j, i);
     }
   }

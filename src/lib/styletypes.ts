@@ -3,8 +3,6 @@ export const Colors = {
   Red: "#91678a",
   Green: "#00a000",
   Blue: "#5A7ACD",
-
-  White: "#ffffff",
 } as const;
 type ColorKeys = keyof typeof Colors;
 export type ColorValue = (typeof Colors)[ColorKeys];

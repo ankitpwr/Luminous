@@ -16,6 +16,8 @@ interface SettingState {
   lineHeight: number;
   contrast: number;
   colorTheme: boolean;
+  asciiCanvas: HTMLCanvasElement | null;
+  brightness: number;
 }
 
 interface SettingAction {
@@ -30,6 +32,8 @@ interface SettingAction {
 
   setContrast: (contrast: number) => void;
   setColorTheme: (colorTheme: boolean) => void;
+  setAsciiCanvas: (asciiCanvas: HTMLCanvasElement) => void;
+  setBrightness: (brightness: number) => void;
 }
 
 type SettingStoreType = SettingState & SettingAction;
@@ -38,11 +42,13 @@ const SettingStore: StateCreator<SettingStoreType> = (set) => ({
   sidebar: false,
   color: Colors.Grey,
   theme: Theme.Normal,
-  fontSize: 10,
-  lineHeight: 9,
-  letterSpacing: 1,
+  fontSize: 12,
+  lineHeight: 12,
+  letterSpacing: 2,
   contrast: 1.4,
   colorTheme: false,
+  asciiCanvas: null,
+  brightness: 0,
 
   setSidebar: (sidebar: boolean) => set({ sidebar: sidebar }),
   setColor: (color: ColorValue) => set({ color: color }),
@@ -55,6 +61,10 @@ const SettingStore: StateCreator<SettingStoreType> = (set) => ({
     }),
   setContrast: (contrast: number) => set({ contrast: contrast }),
   setColorTheme: (colorTheme: boolean) => set({ colorTheme: colorTheme }),
+  setAsciiCanvas: (asciiCanvas: HTMLCanvasElement) =>
+    set({ asciiCanvas: asciiCanvas }),
+
+  setBrightness: (brightness: number) => set({ brightness: brightness }),
 });
 
 const useSettingStore = create<SettingStoreType>(SettingStore);

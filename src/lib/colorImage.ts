@@ -10,6 +10,7 @@ export function downScaleColorImage(
   asciiCanvas: HTMLCanvasElement,
   fontSize: number,
   contrast: number,
+  brightness: number,
 ) {
   asciiCanvas.width = srcCanvas.width;
   asciiCanvas.height = srcCanvas.height;
@@ -44,7 +45,7 @@ export function downScaleColorImage(
       const avgG = sumG / count;
       const avgB = sumB / count;
       const luminance = 0.299 * avgR + 0.587 * avgG + 0.114 * avgB;
-      const constrastLuminous = contrastValue(luminance, contrast);
+      const constrastLuminous = contrastValue(luminance, contrast, brightness);
       const scale = constrastLuminous / (luminance + 1e-6);
 
       const cr = Math.min(255, Math.max(0, avgR * scale));
@@ -60,8 +61,13 @@ export function downScaleColorImage(
     }
   }
 }
-function contrastValue(val: number, contrast: number): number {
-  const normalize = val / 255;
+function contrastValue(
+  val: number,
+  contrast: number,
+  brightness: number,
+): number {
+  let normalize = val / 255;
+  normalize = normalize + brightness;
   let distance = normalize - 0.5;
   distance = distance * contrast;
 

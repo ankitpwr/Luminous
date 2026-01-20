@@ -22,9 +22,9 @@ import type { ReactElement } from "react";
 import { GithubIcon, LinkedinIcon, TwitterIcon } from "@/lib/svg";
 
 export default function SideBar() {
-  const { setSidebar, color, setColor } = useSettingStore();
+  const { color, setColor } = useSettingStore();
   const { theme, setTheme } = useSettingStore();
-  const { setSize, setContrast } = useSettingStore();
+  const { setSize, setContrast, setBrightness } = useSettingStore();
   const svgIcons: Record<ThemeKeys, ReactElement> = {
     Normal: <AtSign color="white" />,
     Dot: <Grip color="white" />,
@@ -32,9 +32,6 @@ export default function SideBar() {
     Blocky: <BlocksIcon color="white" />,
   };
 
-  function handleMenu() {
-    setSidebar(false);
-  }
   function handleColorSelection(value: ColorValue) {
     setColor(value);
   }
@@ -45,14 +42,21 @@ export default function SideBar() {
     setTheme(value);
   }
 
-  function handleSlider(value: number) {
+  function handleResolution(value: number) {
     console.log("value is ", value);
+    let f = value;
+    let lh = theme == Theme.Blocky ? f + 6 : f;
+    let ls = theme == Theme.Blocky ? 6 : 2;
 
-    setSize(value, value, 2);
+    setSize(f, lh, ls);
   }
   function handleContrast(value: number) {
     console.log("value is ", value);
     setContrast(value);
+  }
+
+  function handleBrightness(value: number) {
+    setBrightness(value);
   }
   return (
     <div className="fixed right-4 top-22  w-[330px] bg-[#101010]  rounded-lg overflow-hidden flex flex-col  pt-4 ">
@@ -121,11 +125,11 @@ export default function SideBar() {
             rightIcon={<PlusCircle size="16" color="white" />}
             leftIcon={<MinusCircle size="16" color="white" />}
             startingValue={8}
-            defaultValue={10}
+            defaultValue={12}
             maxValue={20}
             isStepped
             stepSize={1}
-            onChange={handleSlider}
+            onChange={handleResolution}
           />
         </div>
       </div>
@@ -145,7 +149,24 @@ export default function SideBar() {
           />
         </div>
       </div>
+      <div className="flex flex-col justify-center pl-5 gap-2 py-4 ">
+        <p className="text-white text-[14px] font-montserrat">Brightness</p>
+        <div className="flex items-center justify-start">
+          <ElasticSlider
+            rightIcon={<PlusCircle size="16" color="white" />}
+            leftIcon={<MinusCircle size="16" color="white" />}
+            startingValue={-0.6}
+            defaultValue={0}
+            maxValue={1}
+            isStepped
+            stepSize={0.1}
+            onChange={handleBrightness}
+          />
+        </div>
+      </div>
+
       <div className=" h-px bg-[#2d2c37] mx-4 rounded-full flex justify-center"></div>
+
       <div className="flex items-center  px-5 py-4 gap-4 justify-center ">
         <div className="p-2 bg-black rounded-lg cursor-pointer">
           {" "}

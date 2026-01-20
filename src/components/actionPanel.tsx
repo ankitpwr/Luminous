@@ -2,11 +2,14 @@ import useSettingStore from "@/store/setting-store";
 import { Button } from "./ui/button";
 import { RefreshCcw } from "lucide-react";
 import { ColorModeSvg } from "@/lib/svg";
-import type { RefObject } from "react";
-import { measureCharBox } from "@/lib/measureCharBox";
+
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
-export default function ActionPanel() {
+export default function ActionPanel({
+  asciiCanvas,
+}: {
+  asciiCanvas: HTMLCanvasElement | null;
+}) {
   const { sidebar, color, theme, colorTheme, setTheme, setColorTheme } =
     useSettingStore();
   // const { fontSize, letterSpacing, lineHeight, contrast } = useSettingStore();
@@ -20,15 +23,16 @@ export default function ActionPanel() {
 
   function captureImage() {
     console.log("capture called 1");
+    if (asciiCanvas == null) return;
 
-    // const dataUrl = newCanvas.toDataURL("image/png");
-    // console.log(dataUrl);
-    // const link = document.createElement("a");
-    // link.href = dataUrl;
-    // link.download = `luminous-ascii${Date.now()}.png`;
-    // document.body.appendChild(link);
-    // link.click();
-    // document.body.removeChild(link);
+    const dataUrl = asciiCanvas.toDataURL("image/png");
+    console.log(dataUrl);
+    const link = document.createElement("a");
+    link.href = dataUrl;
+    link.download = `luminous-ascii${Date.now()}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
   return (
     <div className="fixed left-1/2  bottom-4 px-2     flex items-center justify-center gap-8 overflow-hidden">
