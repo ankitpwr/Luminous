@@ -22,7 +22,7 @@ import type { ReactElement } from "react";
 import { GithubIcon, LinkedinIcon, TwitterIcon } from "@/lib/svg";
 
 export default function SideBar() {
-  const { color, setColor } = useSettingStore();
+  const { color, fontSize, contrast, brightness, setColor } = useSettingStore();
   const { theme, setTheme } = useSettingStore();
   const { setSize, setContrast, setBrightness } = useSettingStore();
   const svgIcons: Record<ThemeKeys, ReactElement> = {
@@ -125,7 +125,7 @@ export default function SideBar() {
             rightIcon={<PlusCircle size="16" color="white" />}
             leftIcon={<MinusCircle size="16" color="white" />}
             startingValue={8}
-            defaultValue={12}
+            defaultValue={fontSize}
             maxValue={20}
             isStepped
             stepSize={1}
@@ -141,7 +141,7 @@ export default function SideBar() {
             rightIcon={<PlusCircle size="16" color="white" />}
             leftIcon={<MinusCircle size="16" color="white" />}
             startingValue={0.5}
-            defaultValue={1.5}
+            defaultValue={contrast}
             maxValue={3}
             isStepped
             stepSize={0.1}
@@ -156,7 +156,7 @@ export default function SideBar() {
             rightIcon={<PlusCircle size="16" color="white" />}
             leftIcon={<MinusCircle size="16" color="white" />}
             startingValue={-0.6}
-            defaultValue={0}
+            defaultValue={brightness}
             maxValue={1}
             isStepped
             stepSize={0.1}
