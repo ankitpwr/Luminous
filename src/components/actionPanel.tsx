@@ -4,11 +4,12 @@ import { RefreshCcw } from "lucide-react";
 import { ColorModeSvg } from "@/lib/svg";
 
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import type { RefObject } from "react";
 
 export default function ActionPanel({
-  asciiCanvas,
+  asciiCanvasRef,
 }: {
-  asciiCanvas: HTMLCanvasElement | null;
+  asciiCanvasRef: RefObject<HTMLCanvasElement | null>;
 }) {
   const { sidebar, color, theme, colorTheme, setTheme, setColorTheme } =
     useSettingStore();
@@ -22,9 +23,10 @@ export default function ActionPanel({
   }
 
   function captureImage() {
-    console.log("capture called 1");
-    if (asciiCanvas == null) return;
-
+    console.log("capture called 1", asciiCanvasRef.current);
+    if (asciiCanvasRef.current == null) return;
+    const asciiCanvas = asciiCanvasRef.current;
+    console.log("capture called ");
     const dataUrl = asciiCanvas.toDataURL("image/png");
     console.log(dataUrl);
     const link = document.createElement("a");
@@ -35,25 +37,7 @@ export default function ActionPanel({
     document.body.removeChild(link);
   }
   return (
-    <div className="fixed left-1/2  bottom-4 px-2     flex items-center justify-center gap-8 overflow-hidden">
-      <Button
-        onClick={captureImage}
-        variant="secondary"
-        size="lg"
-        className=" cursor-pointer
-    w-24 h-24 rounded-full bg-transparent 
-    border-[3px] border-white 
-    p-2 hover:bg-transparent transition-transform active:scale-95 
-  "
-      >
-        <div
-          className="
-      w-full h-full 
-      bg-white rounded-full 
-      shadow-md
-    "
-        />
-      </Button>
+    <div className="fixed left-1/2 -translate-x-1/2  bottom-4 px-2     flex items-center justify-center gap-6 md:gap-10 overflow-hidden">
       <Tooltip>
         <TooltipTrigger>
           <div
@@ -67,6 +51,25 @@ export default function ActionPanel({
           <p>Flip</p>
         </TooltipContent>
       </Tooltip>
+      <Button
+        onClick={captureImage}
+        variant="secondary"
+        size="lg"
+        className=" cursor-pointer w-20 h-20
+    md:w-24 md:h-24 rounded-full bg-transparent border-[1.5px]
+    md:border-[3px] border-white 
+    p-2 hover:bg-transparent transition-transform active:scale-95 
+  "
+      >
+        <div
+          className="
+      w-full h-full 
+      bg-white rounded-full 
+      shadow-md
+    "
+        />
+      </Button>
+
       <Tooltip>
         <TooltipTrigger>
           <div

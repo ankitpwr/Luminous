@@ -25,9 +25,17 @@ function App() {
     let animationId: number;
     let stream: MediaStream | null;
     async function startCamera() {
-      stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-      }); // Asking browser for camera access and Get camera stream
+ // Asking browser for camera access and Get camera stream
+      try{
+        stream = await navigator.mediaDevices.getUserMedia({
+        audio:false,
+        video:{
+          facingMode: "user",
+        }
+      }); 
+      }catch(err){
+        console.log(err)
+      }
       if (!videoRef.current || !canvasRef.current || !asciiCanvasRef.current) return;
       videoRef.current.srcObject = stream; //Attach stream to video
       await videoRef.current.play();
@@ -104,9 +112,12 @@ function App() {
   ]);
   return (
     <div className=" bg-black w-screen h-screen overflow-hidden">
-      <NavBar />
-      <Menu />
-      <ActionPanel asciiCanvas={asciiCanvasRef.current} />
+      <div className="fixed left-0 top-0 flex w-[100%] justify-between  px-4 py-4 ">
+        <NavBar />
+        <Menu />
+      </div>
+
+      <ActionPanel asciiCanvasRef={asciiCanvasRef} />
       <video ref={videoRef} muted playsInline style={{ display: "none" }} />
       <canvas ref={canvasRef} hidden />
       <canvas ref={asciiCanvasRef} />

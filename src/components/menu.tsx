@@ -15,14 +15,14 @@ export default function Menu() {
           size="40"
           color="white"
           onClick={() => handleMenuToggle(false)}
-          className="fixed right-10 top-6  cursor-pointer hover:scale-110 duration-150 ease-in-out"
+          className=" cursor-pointer hover:scale-110 duration-150 ease-in-out"
         />
       ) : (
         <div
           onClick={() => handleMenuToggle(true)}
-          className="fixed right-8 top-5 px-3 py-3 bg-[#5227ff] rounded-lg cursor-pointer"
+          className=" p-2 md:p-2 bg-[#5227ff] rounded-lg cursor-pointer"
         >
-          <MenuIcon size="30" color="white" />
+          <MenuIcon className="w-6 h-6 md:w-8 md:h-8" color="white" />
         </div>
       )}
     </>
