@@ -38,7 +38,9 @@ export default function ActionPanel({
   function startRecording() {
     console.log(`start recording`);
     const stream = asciiCanvasRef.current!.captureStream(24);
-    const recorder = new MediaRecorder(stream);
+    const recorder = new MediaRecorder(stream, {
+      mimeType: "video/webm; codecs=vp9",
+    });
     recorder.start();
     mediaRecorderRef.current = recorder;
 
@@ -61,8 +63,8 @@ export default function ActionPanel({
       downloadButton.href = recordedMediaURL;
       downloadButton.download = `luminousVideo${Date.now()}`;
       downloadButton.click();
-      document.body.removeChild(downloadButton);
-      URL.revokeObjectURL(recordedMediaURL);
+
+      setTimeout(() => URL.revokeObjectURL(recordedMediaURL), 1000);
     };
   }
 

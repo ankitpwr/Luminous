@@ -1,5 +1,3 @@
-import type { RefObject } from "react";
-
 export function downScaleColorImage(
   imageData: ImageData,
   blockHeight: number,

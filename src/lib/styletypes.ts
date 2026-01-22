@@ -8,7 +8,7 @@ type ColorKeys = keyof typeof Colors;
 export type ColorValue = (typeof Colors)[ColorKeys];
 
 export const Theme = {
-  Normal: [" ", ".", "-", ",", ":", "=", "+", "*", "#", "%", "@"],
+  Normal: [" ", ".", ":", "-", "=", "+", "*", "#", "%", "@"],
   Dot: [" ", ".", "•", "●"],
   Matrix: [" ", "0", "1", "1"],
   Blocky: [" ", "░", "▒", "▓", "█"],

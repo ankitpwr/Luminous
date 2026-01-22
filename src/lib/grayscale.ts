@@ -1,6 +1,6 @@
 import type { ColorValue } from "./styletypes";
 
-export function grayscaleValue(
+export function calculateGrayscaleValue(
   data: ImageDataArray,
   contrast: number,
   brightness: number,
@@ -12,11 +12,10 @@ export function grayscaleValue(
     let gray: number = 0.299 * r + 0.587 * g + 0.114 * b;
 
     let normalize = gray / 255;
+    normalize = (normalize - 0.5) * contrast + 0.5;
     normalize = normalize + brightness;
-    let distance = (normalize - 0.5) * contrast + 0.5;
-    distance = Math.max(0, Math.min(1, distance));
-
-    gray = Math.max(0, Math.min(distance * 255, 255));
+    normalize = Math.max(0, Math.min(normalize, 1));
+    gray = Math.max(0, Math.min(normalize * 255, 255));
 
     data[i] = gray; // R
     data[i + 1] = gray; // G
@@ -25,7 +24,7 @@ export function grayscaleValue(
   return data;
 }
 
-export function downScaleGrayscaleImage(
+export function renderAsciiGrayscale(
   imageData: ImageData,
   blockHeight: number,
   blockWidth: number,
@@ -34,10 +33,7 @@ export function downScaleGrayscaleImage(
   srcCanvas: HTMLCanvasElement,
   asciiCanvas: HTMLCanvasElement,
   fontSize: number,
-  contrast: number,
   color: ColorValue,
-  video: boolean,
-  startVideoRecording: boolean,
 ) {
   asciiCanvas.width = srcCanvas.width;
   asciiCanvas.height = srcCanvas.height;

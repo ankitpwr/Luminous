@@ -62,8 +62,8 @@ const SettingStore: StateCreator<SettingStoreType> = (set) => ({
   setSize: (fontsize: number, lineHeight: number, letterSpacing: number) =>
     set({
       fontSize: fontsize,
-      letterSpacing: letterSpacing,
       lineHeight: lineHeight,
+      letterSpacing: letterSpacing,
     }),
   setContrast: (contrast: number) => set({ contrast: contrast }),
   setColorTheme: (colorTheme: boolean) => set({ colorTheme: colorTheme }),

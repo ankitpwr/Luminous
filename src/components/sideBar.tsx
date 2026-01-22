@@ -43,11 +43,7 @@ export default function SideBar() {
   }
 
   function handleResolution(value: number) {
-    let f = value;
-    let lh = theme == Theme.Blocky ? f + 6 : f;
-    let ls = theme == Theme.Blocky ? 6 : 2;
-
-    setSize(f, lh, ls);
+    setSize(value, value, 2);
   }
   function handleContrast(value: number) {
     setContrast(value);
@@ -140,9 +136,9 @@ export default function SideBar() {
             leftIcon={<MinusCircle size="16" color="white" />}
             startingValue={0.5}
             defaultValue={contrast}
-            maxValue={3}
+            maxValue={2.5}
             isStepped
-            stepSize={0.1}
+            stepSize={0.05}
             onChange={handleContrast}
           />
         </div>
@@ -153,11 +149,11 @@ export default function SideBar() {
           <ElasticSlider
             rightIcon={<PlusCircle size="16" color="white" />}
             leftIcon={<MinusCircle size="16" color="white" />}
-            startingValue={-0.6}
+            startingValue={-0.5}
             defaultValue={brightness}
-            maxValue={1}
+            maxValue={0.5}
             isStepped
-            stepSize={0.1}
+            stepSize={0.02}
             onChange={handleBrightness}
           />
         </div>

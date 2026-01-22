@@ -214,7 +214,7 @@ const Slider: React.FC<SliderProps> = ({
         </motion.div>
       </motion.div>
       <p className="absolute text-white transform -translate-y-4 text-xs font-medium tracking-wide">
-        {Math.round(value * 10) / 10}
+        {Math.round(value * 100) / 100}
       </p>
     </>
   );

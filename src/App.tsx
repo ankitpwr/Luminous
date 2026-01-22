@@ -1,10 +1,10 @@
 import "./App.css";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import NavBar from "./components/navBar";
 import Menu from "./components/menu";
 import useSettingStore from "./store/setting-store";
 import SideBar from "./components/sideBar";
-import { downScaleGrayscaleImage, grayscaleValue } from "./lib/grayscale";
+import { calculateGrayscaleValue, renderAsciiGrayscale } from "./lib/grayscale";
 import { downScaleColorImage } from "./lib/colorImage";
 import { measureCharBox } from "./lib/measureCharBox";
 import ActionPanel from "./components/actionPanel";
@@ -12,34 +12,32 @@ import ActionPanel from "./components/actionPanel";
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const chunkRef = useRef<Blob[]>([]);
 
   const asciiCanvasRef = useRef<HTMLCanvasElement>(null);
-  const { sidebar, color, theme, colorTheme, video, startVideoRecording } =
-    useSettingStore();
+  const { sidebar, color, theme, colorTheme } = useSettingStore();
   const { fontSize, letterSpacing, lineHeight, contrast, brightness } =
     useSettingStore();
-  const asciiChar = theme;
-
-  // prettier-ignore
+  const charDimension = useMemo(
+    () => measureCharBox(fontSize, letterSpacing, lineHeight),
+    [fontSize],
+  );
 
   useEffect(() => {
     let animationId: number;
     let stream: MediaStream | null;
     async function startCamera() {
- // Asking browser for camera access and Get camera stream
-      try{
+      try {
         stream = await navigator.mediaDevices.getUserMedia({
-        audio:false,
-        video:{
-          facingMode: "user",
-        } 
-      });   
-      }catch(err){
-        console.log(err)
+          audio: false,
+          video: {
+            facingMode: "user",
+          },
+        });
+      } catch (err) {
+        console.log(err);
       }
-      if (!videoRef.current || !canvasRef.current || !asciiCanvasRef.current) return;
+      if (!videoRef.current || !canvasRef.current || !asciiCanvasRef.current)
+        return;
       videoRef.current.srcObject = stream; //Attach stream to video
       await videoRef.current.play();
 
@@ -49,49 +47,42 @@ function App() {
       const ctx = canvas.getContext("2d")!;
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      console.log("canvas width and height ", canvas.width, canvas.height);
 
       async function drawFrame() {
         ctx.drawImage(videoRef.current!, 0, 0, canvas.width, canvas.height);
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-        //grayscale logic
         let data = imageData.data;
-        const { width: charW, height: charH } = measureCharBox(fontSize, letterSpacing, lineHeight);
+        const { width: charW, height: charH } = charDimension;
         const blockHeight = charH;
         const blockWidth = charW;
         if (!colorTheme && asciiCanvas) {
-       
-          data = grayscaleValue(data, contrast, brightness);
-          downScaleGrayscaleImage(
+          data = calculateGrayscaleValue(data, contrast, brightness);
+          renderAsciiGrayscale(
             imageData,
             blockHeight,
             blockWidth,
-            asciiChar,
+            theme,
+            data,
+            canvas,
+            asciiCanvas,
+            fontSize,
+            color,
+          );
+        } else if (colorTheme && asciiCanvas) {
+          downScaleColorImage(
+            imageData,
+            blockHeight,
+            blockWidth,
+            theme,
             data,
             canvas,
             asciiCanvas,
             fontSize,
             contrast,
-            color,
-            video, 
-            startVideoRecording
-          
+            brightness,
           );
-         
-        } else if(colorTheme && asciiCanvas) {
-          downScaleColorImage(
-              imageData,
-              blockHeight,
-              blockWidth,
-              asciiChar,
-              data,
-              canvas,
-              asciiCanvas,
-              fontSize,
-              contrast,
-              brightness
-            );
-          
         }
 
         animationId = requestAnimationFrame(drawFrame);
@@ -104,17 +95,7 @@ function App() {
       if (animationId) cancelAnimationFrame(animationId);
       if (stream) stream.getTracks().forEach((track) => track.stop());
     };
-  }, [
-    asciiChar,
-    fontSize,
-    lineHeight,
-    letterSpacing,
-    contrast,
-    color,
-    theme,
-    colorTheme,
-    brightness
-  ]);
+  }, [fontSize, contrast, color, theme, colorTheme, brightness]);
   return (
     <div className=" bg-black w-screen h-screen overflow-hidden">
       <div className="fixed left-0 top-0 flex w-[100%] justify-between  px-4 py-4 ">
