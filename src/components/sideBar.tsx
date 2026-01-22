@@ -43,7 +43,6 @@ export default function SideBar() {
   }
 
   function handleResolution(value: number) {
-    console.log("value is ", value);
     let f = value;
     let lh = theme == Theme.Blocky ? f + 6 : f;
     let ls = theme == Theme.Blocky ? 6 : 2;
@@ -51,7 +50,6 @@ export default function SideBar() {
     setSize(f, lh, ls);
   }
   function handleContrast(value: number) {
-    console.log("value is ", value);
     setContrast(value);
   }
 

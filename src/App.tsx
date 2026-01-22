@@ -12,9 +12,12 @@ import ActionPanel from "./components/actionPanel";
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const chunkRef = useRef<Blob[]>([]);
 
   const asciiCanvasRef = useRef<HTMLCanvasElement>(null);
-  const { sidebar, color, theme, colorTheme } = useSettingStore();
+  const { sidebar, color, theme, colorTheme, video, startVideoRecording } =
+    useSettingStore();
   const { fontSize, letterSpacing, lineHeight, contrast, brightness } =
     useSettingStore();
   const asciiChar = theme;
@@ -31,8 +34,8 @@ function App() {
         audio:false,
         video:{
           facingMode: "user",
-        }
-      }); 
+        } 
+      });   
       }catch(err){
         console.log(err)
       }
@@ -70,6 +73,8 @@ function App() {
             fontSize,
             contrast,
             color,
+            video, 
+            startVideoRecording
           
           );
          

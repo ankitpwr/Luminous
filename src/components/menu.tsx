@@ -7,7 +7,6 @@ export default function Menu() {
     setSidebar(val);
   }
 
-  console.log(sidebar);
   return (
     <>
       {sidebar == true ? (

@@ -18,6 +18,8 @@ interface SettingState {
   colorTheme: boolean;
   asciiCanvas: HTMLCanvasElement | null;
   brightness: number;
+  video: boolean;
+  startVideoRecording: boolean;
 }
 
 interface SettingAction {
@@ -34,6 +36,8 @@ interface SettingAction {
   setColorTheme: (colorTheme: boolean) => void;
   setAsciiCanvas: (asciiCanvas: HTMLCanvasElement) => void;
   setBrightness: (brightness: number) => void;
+  setVideo: (video: boolean) => void;
+  setStartVideoRecording: (startVideoRecording: boolean) => void;
 }
 
 type SettingStoreType = SettingState & SettingAction;
@@ -49,6 +53,8 @@ const SettingStore: StateCreator<SettingStoreType> = (set) => ({
   colorTheme: false,
   asciiCanvas: null,
   brightness: 0,
+  video: false,
+  startVideoRecording: false,
 
   setSidebar: (sidebar: boolean) => set({ sidebar: sidebar }),
   setColor: (color: ColorValue) => set({ color: color }),
@@ -65,6 +71,9 @@ const SettingStore: StateCreator<SettingStoreType> = (set) => ({
     set({ asciiCanvas: asciiCanvas }),
 
   setBrightness: (brightness: number) => set({ brightness: brightness }),
+  setVideo: (video: boolean) => set({ video: video }),
+  setStartVideoRecording: (startVideoRecording: boolean) =>
+    set({ startVideoRecording: startVideoRecording }),
 });
 
 const useSettingStore = create<SettingStoreType>(SettingStore);

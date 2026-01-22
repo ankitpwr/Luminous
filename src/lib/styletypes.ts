@@ -1,7 +1,7 @@
 export const Colors = {
   Grey: "#6a7282",
   Red: "#91678a",
-  Green: "#00a000",
+  Green: " #00FF41",
   Blue: "#5A7ACD",
 } as const;
 type ColorKeys = keyof typeof Colors;

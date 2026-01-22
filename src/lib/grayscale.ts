@@ -36,6 +36,8 @@ export function downScaleGrayscaleImage(
   fontSize: number,
   contrast: number,
   color: ColorValue,
+  video: boolean,
+  startVideoRecording: boolean,
 ) {
   asciiCanvas.width = srcCanvas.width;
   asciiCanvas.height = srcCanvas.height;
