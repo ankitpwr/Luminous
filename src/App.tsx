@@ -21,25 +21,48 @@ function App() {
     () => measureCharBox(fontSize, letterSpacing, lineHeight),
     [fontSize],
   );
+  const streamRef = useRef<MediaStream | null>(null);
+  const [cameraRedy, setCameraReady] = useState(false);
 
   useEffect(() => {
-    let animationId: number;
-    let stream: MediaStream | null;
     async function startCamera() {
       try {
-        stream = await navigator.mediaDevices.getUserMedia({
+        if (!videoRef.current) return;
+        streamRef.current = await navigator.mediaDevices.getUserMedia({
           audio: false,
           video: {
             facingMode: "user",
           },
         });
+        videoRef.current.srcObject = streamRef.current; //Attach stream to video
+        await videoRef.current.play();
+
+        setCameraReady(true);
       } catch (err) {
         console.log(err);
       }
-      if (!videoRef.current || !canvasRef.current || !asciiCanvasRef.current)
+    }
+    startCamera();
+
+    return () => {
+      if (streamRef.current)
+        streamRef.current.getTracks().forEach((track) => track.stop());
+    };
+  }, []);
+
+  useEffect(() => {
+    let animationId: number;
+
+    async function startCanvas() {
+      if (
+        !videoRef.current ||
+        !canvasRef.current ||
+        !asciiCanvasRef.current ||
+        !streamRef.current
+      ) {
+        console.log(`camera state is `, cameraRedy);
         return;
-      videoRef.current.srcObject = stream; //Attach stream to video
-      await videoRef.current.play();
+      }
 
       const canvas = canvasRef.current;
       const asciiCanvas = asciiCanvasRef.current;
@@ -89,13 +112,13 @@ function App() {
       }
       drawFrame();
     }
-    startCamera();
+    startCanvas();
 
     return () => {
       if (animationId) cancelAnimationFrame(animationId);
-      if (stream) stream.getTracks().forEach((track) => track.stop());
+      console.log("useEffect is unmounted");
     };
-  }, [fontSize, contrast, color, theme, colorTheme, brightness]);
+  }, [fontSize, contrast, color, theme, colorTheme, brightness, cameraRedy]);
   return (
     <div className=" bg-black w-screen h-screen overflow-hidden">
       <div className="fixed left-0 top-0 flex w-[100%] justify-between  px-4 py-4 ">
