@@ -14,12 +14,12 @@ export default function Menu() {
           size="40"
           color="white"
           onClick={() => handleMenuToggle(false)}
-          className=" cursor-pointer hover:scale-110 duration-150 ease-in-out"
+          className=" cursor-pointer "
         />
       ) : (
         <div
           onClick={() => handleMenuToggle(true)}
-          className=" p-2 md:p-2 bg-[#5227ff] rounded-lg cursor-pointer"
+          className=" p-2 md:p-2 bg-[#5227ff] rounded-lg cursor-pointer  "
         >
           <MenuIcon className="w-6 h-6 md:w-8 md:h-8" color="white" />
         </div>

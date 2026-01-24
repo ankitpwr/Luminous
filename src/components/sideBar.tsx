@@ -43,7 +43,7 @@ export default function SideBar() {
   }
 
   function handleResolution(value: number) {
-    setSize(value, value, 2);
+    setSize(value, value, value / 2);
   }
   function handleContrast(value: number) {
     setContrast(value);
@@ -118,11 +118,11 @@ export default function SideBar() {
           <ElasticSlider
             rightIcon={<PlusCircle size="16" color="white" />}
             leftIcon={<MinusCircle size="16" color="white" />}
-            startingValue={8}
+            startingValue={6}
             defaultValue={fontSize}
             maxValue={20}
             isStepped
-            stepSize={1}
+            stepSize={2}
             onChange={handleResolution}
           />
         </div>

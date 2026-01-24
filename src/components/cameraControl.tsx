@@ -5,11 +5,11 @@ export default function CameraControl() {
 
   return (
     <div
-      className={`flex py-[6px]  px-[6px] gap-2 border border-[#5227ff] bg-[#26292f] rounded-full text-white font-montserrat text-[16px] justify-center items-center`}
+      className={`flex py-[4px]  px-[4px] gap-1 bg-[#26292f] rounded-full text-white font-montserrat text-[14px] justify-center items-center`}
     >
       <div
         onClick={() => setVideo(false)}
-        className={` py-1.5 w-26 rounded-full flex items-center justify-center cursor-pointer
+        className={` py-1.5 w-22 rounded-full flex items-center justify-center cursor-pointer
          ${video == false ? "bg-[#5227ff]" : ""}
         `}
       >
@@ -17,7 +17,7 @@ export default function CameraControl() {
       </div>
       <div
         onClick={() => setVideo(true)}
-        className={` py-[6px] w-26  rounded-full flex items-center justify-center cursor-pointer 
+        className={` py-1.5 w-22  rounded-full flex items-center justify-center cursor-pointer 
           ${video == true ? "bg-[#5227ff]" : ""}`}
       >
         <span>Video</span>

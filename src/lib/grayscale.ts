@@ -1,4 +1,5 @@
 import type { ColorValue } from "./styletypes";
+// const charCache = new Map<string, HTMLCanvasElement>();
 
 export function calculateGrayscaleValue(
   data: ImageDataArray,
@@ -9,7 +10,7 @@ export function calculateGrayscaleValue(
     let r = data[i];
     let g = data[i + 1];
     let b = data[i + 2];
-    let gray: number = 0.299 * r + 0.587 * g + 0.114 * b;
+    let gray: number = 0.2126 * r + 0.7152 * g + 0.0722 * b;
 
     let normalize = gray / 255;
     normalize = (normalize - 0.5) * contrast + 0.5;
@@ -28,43 +29,34 @@ export function renderAsciiGrayscale(
   imageData: ImageData,
   blockHeight: number,
   blockWidth: number,
-  asciiChar: String[],
-  data: ImageDataArray,
-  srcCanvas: HTMLCanvasElement,
+  asciiChar: string[],
+
   asciiCanvas: HTMLCanvasElement,
   fontSize: number,
   color: ColorValue,
+  dpr: number,
 ) {
-  asciiCanvas.width = srcCanvas.width;
-  asciiCanvas.height = srcCanvas.height;
   const asciiCtx = asciiCanvas.getContext("2d")!;
   asciiCtx.fillStyle = "black";
   asciiCtx.fillRect(0, 0, asciiCanvas.width, asciiCanvas.height);
   asciiCtx.font = `${fontSize}px monospace`;
   asciiCtx.textBaseline = "top";
+  const data = imageData.data;
 
-  for (let i = 0; i < imageData.height; i += blockHeight) {
-    for (let j = 0; j < imageData.width; j += blockWidth) {
-      let sum = 0;
-      let count = 0;
+  const charW = blockWidth * dpr;
+  const charH = blockHeight * dpr;
 
-      for (let x = 0; x < blockHeight; x++) {
-        for (let y = 0; y < blockWidth; y++) {
-          const px = j + y;
-          const py = i + x;
-
-          if (px >= srcCanvas.width || py >= srcCanvas.height) continue;
-
-          const index = (py * srcCanvas.width + px) * 4;
-          sum += data[index]; // grayscale value (R channel)
-          count++;
-        }
-      }
-      const avg = sum / count;
-      const charIndex = Math.floor((avg / 255) * (asciiChar.length - 1));
+  for (let i = 0; i < imageData.height; i++) {
+    let gray = 0;
+    for (let j = 0; j < imageData.width; j++) {
+      const index = (i * imageData.width + j) * 4;
+      gray = data[index];
+      const charIndex = Math.floor((gray / 255) * (asciiChar.length - 1));
       asciiCtx.fillStyle =
-        color == "#6a7282" ? `rgb(${avg},${avg},${avg})` : color;
-      asciiCtx.fillText(String(asciiChar[charIndex]), j, i);
+        color == "#6a7282" ? `rgb(${gray},${gray},${gray})` : color;
+      const dx = Math.round(j * charW);
+      const dy = Math.round(i * charH);
+      asciiCtx.fillText(asciiChar[charIndex], dx, dy);
     }
   }
 }

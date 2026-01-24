@@ -6,13 +6,15 @@ import { ColorModeSvg } from "@/lib/svg";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { useRef, type RefObject } from "react";
 import CameraControl from "./cameraControl";
+import Timer from "./timer";
 
 export default function ActionPanel({
   asciiCanvasRef,
 }: {
   asciiCanvasRef: RefObject<HTMLCanvasElement | null>;
 }) {
-  const { theme, colorTheme, video, startVideoRecording } = useSettingStore();
+  const { theme, colorTheme, video, startVideoRecording, cameraReady } =
+    useSettingStore();
   const { setStartVideoRecording, setTheme, setColorTheme } = useSettingStore();
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunkRef = useRef<Blob[]>([]);
@@ -25,6 +27,7 @@ export default function ActionPanel({
     setColorTheme(!colorTheme);
   }
   function handleStartVideo() {
+    if (!cameraReady) return;
     if (startVideoRecording == false) startRecording();
     else if (startVideoRecording == true) stopRecording();
     setStartVideoRecording(!startVideoRecording);
@@ -36,8 +39,7 @@ export default function ActionPanel({
   }
 
   function startRecording() {
-    console.log(`start recording`);
-    const stream = asciiCanvasRef.current!.captureStream(24);
+    const stream = asciiCanvasRef.current!.captureStream(30);
     const recorder = new MediaRecorder(stream, {
       mimeType: "video/webm; codecs=vp9",
     });
@@ -69,7 +71,7 @@ export default function ActionPanel({
   }
 
   function captureImage() {
-    if (asciiCanvasRef.current == null) return;
+    if (!asciiCanvasRef.current || !cameraReady) return;
     const asciiCanvas = asciiCanvasRef.current;
     const dataUrl = asciiCanvas.toDataURL("image/png");
     const link = document.createElement("a");
@@ -82,12 +84,13 @@ export default function ActionPanel({
   return (
     <div className="fixed left-1/2 -translate-x-1/2  bottom-4 flex flex-col items-center gap-6">
       <CameraControl />
+
       <div className=" px-2  flex items-center justify-center gap-6 md:gap-10 overflow-hidden">
         <Tooltip>
           <TooltipTrigger>
             <div
               onClick={handleFlip}
-              className={`bg-black w-12 h-12   rounded-full flex items-center justify-center border border-white cursor-pointer hover:scale-110 duration-150 ease-in-out`}
+              className={`bg-[#1b242f] w-12 h-12   rounded-full flex items-center justify-center border-[2px] border-[#3a3f47] cursor-pointer transition-transform active:scale-95`}
             >
               <RefreshCcw size="24" color="white" />
             </div>
@@ -103,21 +106,25 @@ export default function ActionPanel({
           variant="secondary"
           size="lg"
           className={`cursor-pointer w-20 h-20 md:w-24 md:h-24 rounded-full bg-transparent border-[1px] md:border-[3px]
-                    p-2 hover:bg-transparent transition-transform active:scale-95 
-                    ${video == true ? "border-red-600" : " border-white "}`}
+                    p-2 hover:bg-transparent transition-transform active:scale-95 flex items-center justify-center 
+                    `}
         >
-          <div
-            className={`w-full h-full  rounded-full shadow-md
-               ${video == true ? "bg-red-600" : " bg-white "}`}
-          />
+          {video == false ? (
+            <div className={`w-full h-full  rounded-full shadow-md bg-white`} />
+          ) : (
+            <div
+              className={`shadow-md   bg-red-600 
+               ${startVideoRecording == true ? "animate-pulse rounded-lg w-[70%] h-[70%]" : " rounded-full w-full h-full"}`}
+            />
+          )}
         </Button>
 
         <Tooltip>
           <TooltipTrigger>
             <div
               onClick={handleColorMode}
-              className={`bg-black w-12 h-12   rounded-full flex items-center justify-center border  cursor-pointer hover:scale-110 duration-150 ease-in-out
-             ${colorTheme == true ? "border-[#5227ff]" : "border-white"}
+              className={`bg-[#1b242f] w-12 h-12   rounded-full flex items-center justify-center border-[2px]  cursor-pointer  transition-transform active:scale-95
+             ${colorTheme == true ? "border-[#3a3f47]" : "border-[#3a3f47]"}
             `}
             >
               <ColorModeSvg
