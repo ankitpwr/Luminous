@@ -43,7 +43,7 @@ export default function SideBar() {
   }
 
   function handleResolution(value: number) {
-    setSize(value, value, value / 2);
+    setSize(value, value, 2);
   }
   function handleContrast(value: number) {
     setContrast(value);

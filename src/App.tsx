@@ -15,9 +15,9 @@ function App() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const asciiCanvasRef = useRef<HTMLCanvasElement>(null);
-  const { color, theme, colorTheme } = useSettingStore();
+  const { color, theme, colorTheme, asciiChars } = useSettingStore();
   const { video, startVideoRecording, sidebar } = useSettingStore();
-  const { fontSize, letterSpacing, lineHeight, contrast, brightness } =
+  const { fontSize, letterSpacing, lineHeight, contrast, brightness, isFront } =
     useSettingStore();
   const { cameraReady, setCameraReady } = useSettingStore();
   const charDimension = useMemo(
@@ -33,7 +33,7 @@ function App() {
         streamRef.current = await navigator.mediaDevices.getUserMedia({
           audio: false,
           video: {
-            facingMode: { exact: ["user"] },
+            facingMode: isFront ? "user" : "environment",
           },
         });
         videoRef.current.srcObject = streamRef.current; //Attach stream to video
@@ -50,10 +50,11 @@ function App() {
       if (streamRef.current)
         streamRef.current.getTracks().forEach((track) => track.stop());
     };
-  }, []);
+  }, [isFront]);
 
   useEffect(() => {
     let animationId: number;
+    console.log("asciiChars are ", asciiChars);
 
     async function startCanvas() {
       if (
@@ -117,7 +118,7 @@ function App() {
             imageData,
             charH,
             charW,
-            theme,
+            asciiChars,
             asciiCanvas,
             fontSize,
             color,
@@ -128,7 +129,7 @@ function App() {
             imageData,
             charH,
             charW,
-            theme,
+            asciiChars,
             asciiCanvas,
             fontSize,
             contrast,
@@ -147,7 +148,16 @@ function App() {
       if (animationId) cancelAnimationFrame(animationId);
       console.log("useEffect is unmounted");
     };
-  }, [fontSize, contrast, color, theme, colorTheme, brightness, cameraReady]);
+  }, [
+    fontSize,
+    contrast,
+    color,
+    theme,
+    colorTheme,
+    brightness,
+    cameraReady,
+    asciiChars,
+  ]);
   return (
     <div className=" bg-black w-screen h-screen overflow-hidden">
       <div className="fixed left-0 top-0 flex w-[100%] justify-between  px-4 py-4 ">

@@ -1,28 +1,38 @@
 import useSettingStore from "@/store/setting-store";
 import { Button } from "./ui/button";
-import { RefreshCcw } from "lucide-react";
+import { RefreshCcw, SwitchCamera, Undo } from "lucide-react";
 import { ColorModeSvg } from "@/lib/svg";
 
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
-import { useRef, type RefObject } from "react";
+import { useRef, useState, type RefObject } from "react";
 import CameraControl from "./cameraControl";
-import Timer from "./timer";
 
 export default function ActionPanel({
   asciiCanvasRef,
 }: {
   asciiCanvasRef: RefObject<HTMLCanvasElement | null>;
 }) {
-  const { theme, colorTheme, video, startVideoRecording, cameraReady } =
+  const {
+    theme,
+    colorTheme,
+    video,
+    startVideoRecording,
+    cameraReady,
+    isFront,
+    asciiChars,
+  } = useSettingStore();
+  const { setStartVideoRecording, setAsciiChar, setColorTheme, setFront } =
     useSettingStore();
-  const { setStartVideoRecording, setTheme, setColorTheme } = useSettingStore();
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunkRef = useRef<Blob[]>([]);
 
   function handleFlip() {
-    setTheme(theme.reverse());
+    setFront(!isFront);
   }
-
+  function handleInvert() {
+    if (asciiChars == theme.regular) setAsciiChar(theme.invert);
+    else setAsciiChar(theme.regular);
+  }
   function handleColorMode() {
     setColorTheme(!colorTheme);
   }
@@ -92,7 +102,7 @@ export default function ActionPanel({
               onClick={handleFlip}
               className={`bg-[#1b242f] w-12 h-12   rounded-full flex items-center justify-center border-[2px] border-[#3a3f47] cursor-pointer transition-transform active:scale-95`}
             >
-              <RefreshCcw size="24" color="white" />
+              <SwitchCamera size="24" color="white" />
             </div>
           </TooltipTrigger>
           <TooltipContent className="bg-white text-black ">
@@ -135,6 +145,25 @@ export default function ActionPanel({
           </TooltipTrigger>
           <TooltipContent className="bg-white text-black ">
             <p>Color Mode</p>
+          </TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger>
+            <div
+              onClick={handleInvert}
+              className={`bg-[#1b242f] w-12 h-12   rounded-full flex items-center justify-center border-[2px]  cursor-pointer  transition-transform active:scale-95
+             ${asciiChars == theme.invert ? "border-[#3a3f47]" : "border-[#3a3f47]"}
+            `}
+            >
+              <RefreshCcw
+                size={24}
+                color={asciiChars == theme.invert ? "#5227ff" : "white"}
+              />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent className="bg-white text-black ">
+            <p>Invert</p>
           </TooltipContent>
         </Tooltip>
       </div>

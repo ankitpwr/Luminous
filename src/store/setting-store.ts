@@ -21,6 +21,8 @@ interface SettingState {
   video: boolean;
   startVideoRecording: boolean;
   cameraReady: boolean;
+  isFront: boolean;
+  asciiChars: string[];
 }
 
 interface SettingAction {
@@ -40,6 +42,8 @@ interface SettingAction {
   setVideo: (video: boolean) => void;
   setStartVideoRecording: (startVideoRecording: boolean) => void;
   setCameraReady: (cameraReady: boolean) => void;
+  setFront: (isFront: boolean) => void;
+  setAsciiChar: (asciiChar: string[]) => void;
 }
 
 type SettingStoreType = SettingState & SettingAction;
@@ -58,10 +62,13 @@ const SettingStore: StateCreator<SettingStoreType> = (set) => ({
   video: false,
   startVideoRecording: false,
   cameraReady: false,
+  isFront: true,
+  asciiChars: Theme.Normal.regular,
 
   setSidebar: (sidebar: boolean) => set({ sidebar: sidebar }),
   setColor: (color: ColorValue) => set({ color: color }),
-  setTheme: (theme: ThemeValue) => set({ theme: theme }),
+  setTheme: (theme: ThemeValue) =>
+    set({ theme: theme, asciiChars: theme.regular }),
   setSize: (fontsize: number, lineHeight: number, letterSpacing: number) =>
     set({
       fontSize: fontsize,
@@ -79,6 +86,8 @@ const SettingStore: StateCreator<SettingStoreType> = (set) => ({
     set({ startVideoRecording: startVideoRecording }),
 
   setCameraReady: (cameraReady: boolean) => set({ cameraReady: cameraReady }),
+  setFront: (isFont: boolean) => set({ isFront: isFont }),
+  setAsciiChar: (asciiChar: string[]) => set({ asciiChars: asciiChar }),
 });
 
 const useSettingStore = create<SettingStoreType>(SettingStore);
