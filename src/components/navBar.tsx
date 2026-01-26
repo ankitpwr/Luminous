@@ -1,6 +1,6 @@
 import GradientText from "./reactBits/GradientText";
 
-export default function NavBar() {
+export default function TitleBar() {
   return (
     <div className="  ">
       <GradientText animationSpeed={3} pauseOnHover showBorder className="">

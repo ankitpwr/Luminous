@@ -1,10 +1,9 @@
+import { useRef, type RefObject } from "react";
 import useSettingStore from "@/store/setting-store";
 import { Button } from "./ui/button";
-import { RefreshCcw, SwitchCamera, Undo } from "lucide-react";
 import { ColorModeSvg } from "@/lib/svg";
-
+import { RefreshCcw, SwitchCamera } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
-import { useRef, useState, type RefObject } from "react";
 import CameraControl from "./cameraControl";
 
 export default function ActionPanel({
@@ -20,32 +19,24 @@ export default function ActionPanel({
     cameraReady,
     isFront,
     asciiChars,
+    setStartVideoRecording,
+    setAsciiChar,
+    setColorTheme,
+    setFront,
   } = useSettingStore();
-  const { setStartVideoRecording, setAsciiChar, setColorTheme, setFront } =
-    useSettingStore();
+
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunkRef = useRef<Blob[]>([]);
 
-  function handleFlip() {
-    setFront(!isFront);
-  }
   function handleInvert() {
     if (asciiChars == theme.regular) setAsciiChar(theme.invert);
     else setAsciiChar(theme.regular);
   }
-  function handleColorMode() {
-    setColorTheme(!colorTheme);
-  }
   function handleStartVideo() {
     if (!cameraReady) return;
     if (startVideoRecording == false) startRecording();
-    else if (startVideoRecording == true) stopRecording();
+    else if (startVideoRecording == true) mediaRecorderRef.current!.stop();
     setStartVideoRecording(!startVideoRecording);
-  }
-
-  function stopRecording() {
-    console.log("stop recording ");
-    mediaRecorderRef.current!.stop();
   }
 
   function startRecording() {
@@ -75,7 +66,6 @@ export default function ActionPanel({
       downloadButton.href = recordedMediaURL;
       downloadButton.download = `luminousVideo${Date.now()}`;
       downloadButton.click();
-
       setTimeout(() => URL.revokeObjectURL(recordedMediaURL), 1000);
     };
   }
@@ -92,15 +82,15 @@ export default function ActionPanel({
     document.body.removeChild(link);
   }
   return (
-    <div className="fixed left-1/2 -translate-x-1/2  bottom-4 flex flex-col items-center gap-6">
+    <div className="fixed left-1/2 -translate-x-1/2  bottom-6 flex flex-col items-center gap-6">
       <CameraControl />
 
       <div className=" px-2  flex items-center justify-center gap-6 md:gap-10 overflow-hidden">
         <Tooltip>
           <TooltipTrigger>
             <div
-              onClick={handleFlip}
-              className={`bg-[#1b242f] w-12 h-12   rounded-full flex items-center justify-center border-[2px] border-[#3a3f47] cursor-pointer transition-transform active:scale-95`}
+              onClick={() => setFront(!isFront)}
+              className={`bg-[#26292f] w-12 h-12   rounded-full flex items-center justify-center border-[2px] border-[#3a3f47] cursor-pointer transition-transform active:scale-95`}
             >
               <SwitchCamera size="24" color="white" />
             </div>
@@ -132,8 +122,8 @@ export default function ActionPanel({
         <Tooltip>
           <TooltipTrigger>
             <div
-              onClick={handleColorMode}
-              className={`bg-[#1b242f] w-12 h-12   rounded-full flex items-center justify-center border-[2px]  cursor-pointer  transition-transform active:scale-95
+              onClick={() => setColorTheme(!colorTheme)}
+              className={`bg-[#26292f] w-12 h-12   rounded-full flex items-center justify-center border-[2px]  cursor-pointer  transition-transform active:scale-95
              ${colorTheme == true ? "border-[#3a3f47]" : "border-[#3a3f47]"}
             `}
             >
@@ -145,25 +135,6 @@ export default function ActionPanel({
           </TooltipTrigger>
           <TooltipContent className="bg-white text-black ">
             <p>Color Mode</p>
-          </TooltipContent>
-        </Tooltip>
-
-        <Tooltip>
-          <TooltipTrigger>
-            <div
-              onClick={handleInvert}
-              className={`bg-[#1b242f] w-12 h-12   rounded-full flex items-center justify-center border-[2px]  cursor-pointer  transition-transform active:scale-95
-             ${asciiChars == theme.invert ? "border-[#3a3f47]" : "border-[#3a3f47]"}
-            `}
-            >
-              <RefreshCcw
-                size={24}
-                color={asciiChars == theme.invert ? "#5227ff" : "white"}
-              />
-            </div>
-          </TooltipTrigger>
-          <TooltipContent className="bg-white text-black ">
-            <p>Invert</p>
           </TooltipContent>
         </Tooltip>
       </div>

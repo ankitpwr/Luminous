@@ -16,7 +16,7 @@ import {
   type ColorValue,
 } from "../lib/styletypes";
 
-import ElasticSlider from "./ElasticSlider";
+import ElasticSlider from "./reactBits/ElasticSlider";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import type { ReactElement } from "react";
 import { GithubIcon, LinkedinIcon, TwitterIcon } from "@/lib/svg";
@@ -32,9 +32,6 @@ export default function SideBar() {
     Blocky: <BlocksIcon color="white" />,
   };
 
-  function handleColorSelection(value: ColorValue) {
-    setColor(value);
-  }
   function handleTheme(value: ThemeValue) {
     if (value == Theme.Matrix) {
       setColor(Colors.Green);
@@ -42,16 +39,6 @@ export default function SideBar() {
     setTheme(value);
   }
 
-  function handleResolution(value: number) {
-    setSize(value, value, 2);
-  }
-  function handleContrast(value: number) {
-    setContrast(value);
-  }
-
-  function handleBrightness(value: number) {
-    setBrightness(value);
-  }
   return (
     <div className="fixed right-4 top-22  w-[330px] bg-[#101010]  rounded-lg overflow-hidden flex flex-col  pt-4 ">
       <div className="flex items-center justify-between pl-4 pb-4">
@@ -67,7 +54,7 @@ export default function SideBar() {
           {Object.entries(Colors).map(([key, value], index) => {
             return (
               <div
-                onClick={() => handleColorSelection(value)}
+                onClick={() => setColor(value)}
                 key={index}
                 style={{ backgroundColor: value }}
                 className={`w-8 h-8 rounded cursor-pointer transition-all ${
@@ -123,7 +110,7 @@ export default function SideBar() {
             maxValue={20}
             isStepped
             stepSize={2}
-            onChange={handleResolution}
+            onChange={(value: number) => setSize(value, value, 2)}
           />
         </div>
       </div>
@@ -139,7 +126,7 @@ export default function SideBar() {
             maxValue={2.5}
             isStepped
             stepSize={0.05}
-            onChange={handleContrast}
+            onChange={(value: number) => setContrast(value)}
           />
         </div>
       </div>
@@ -154,7 +141,7 @@ export default function SideBar() {
             maxValue={0.5}
             isStepped
             stepSize={0.02}
-            onChange={handleBrightness}
+            onChange={(value: number) => setBrightness(value)}
           />
         </div>
       </div>

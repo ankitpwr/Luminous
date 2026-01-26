@@ -10,7 +10,7 @@ export type ColorValue = (typeof Colors)[ColorKeys];
 export const Theme = {
   Normal: {
     regular: [" ", ".", ":", "-", "=", "+", "*", "#", "%", "@"],
-    invert: ["@", "%", "#", " ", " "],
+    invert: ["@", "%", "#", " "],
   },
   Dot: {
     regular: [" ", ".", "•", "●"],
@@ -24,13 +24,6 @@ export const Theme = {
     regular: [" ", "░", "▒", "▓", "█"],
     invert: ["█", "▓", "▒", "░", " ", " ", " "],
   },
-};
-
-export const InvertTheme = {
-  Invert_Normal: ["@", "%", "#", "*", "+", "=", "-", ":", ".", " "],
-  Invert_Dot: ["●", "•", ".", " "],
-  Invert_Matrix: ["1", "1", "0", " "],
-  Invert_Blocky: ["█", "▓", "▒", "░", " "],
 };
 
 export type ThemeKeys = keyof typeof Theme;
