@@ -9,6 +9,7 @@ import Menu from "./components/menu";
 import { downScaleColorImage } from "./lib/colorImage";
 import { measureCharBox } from "./lib/measureCharBox";
 import { calculateGrayscaleValue, renderAsciiGrayscale } from "./lib/grayscale";
+import PopupDrawer from "./components/popupDrawer";
 
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -37,12 +38,15 @@ function App() {
     () => measureCharBox(fontSize, letterSpacing, lineHeight),
     [fontSize],
   );
+  console.log(`1. camera status is `, cameraReady);
 
   useEffect(() => {
     async function startCamera() {
       try {
         if (!videoRef.current) return;
         //get camera access
+        console.log(`2. camera status is `, cameraReady);
+        // setCameraReady("loading");
         streamRef.current = await navigator.mediaDevices.getUserMedia({
           audio: false,
           video: {
@@ -50,12 +54,16 @@ function App() {
           },
         });
         //Attach stream to video
+        console.log(`3. camera status is `, cameraReady);
         videoRef.current.srcObject = streamRef.current;
         await videoRef.current.play();
-        setCameraReady(true);
+        setCameraReady("active");
       } catch (err) {
-        console.log(err);
+        console.log("errror is ", err);
+        setCameraReady("denied");
       }
+
+      console.log(`4. camera status is `, cameraReady);
     }
     startCamera();
 
@@ -67,7 +75,7 @@ function App() {
 
   useEffect(() => {
     let animationId: number;
-    console.log("asciiChars are ", asciiChars);
+
     async function startCanvas() {
       if (
         !videoRef.current ||
@@ -75,7 +83,6 @@ function App() {
         !asciiCanvasRef.current ||
         !streamRef.current
       ) {
-        console.log(`camera state is `, cameraReady);
         return;
       }
 
@@ -167,6 +174,7 @@ function App() {
   ]);
   return (
     <div className=" bg-black w-screen h-screen overflow-hidden">
+      <PopupDrawer />
       <div className="fixed left-0 top-0 flex w-[100%] justify-between  px-4 py-4 ">
         <TitleBar />
         <Menu />

@@ -26,5 +26,7 @@ export const Theme = {
   },
 };
 
+export type CameraState = "loading" | "active" | "denied";
+
 export type ThemeKeys = keyof typeof Theme;
 export type ThemeValue = (typeof Theme)[ThemeKeys];

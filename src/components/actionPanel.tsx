@@ -2,7 +2,7 @@ import { useRef, type RefObject } from "react";
 import useSettingStore from "@/store/setting-store";
 import { Button } from "./ui/button";
 import { ColorModeSvg } from "@/lib/svg";
-import { RefreshCcw, SwitchCamera } from "lucide-react";
+import { SwitchCamera } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import CameraControl from "./cameraControl";
 
@@ -12,15 +12,12 @@ export default function ActionPanel({
   asciiCanvasRef: RefObject<HTMLCanvasElement | null>;
 }) {
   const {
-    theme,
     colorTheme,
     video,
     startVideoRecording,
     cameraReady,
     isFront,
-    asciiChars,
     setStartVideoRecording,
-    setAsciiChar,
     setColorTheme,
     setFront,
   } = useSettingStore();
@@ -28,12 +25,8 @@ export default function ActionPanel({
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunkRef = useRef<Blob[]>([]);
 
-  function handleInvert() {
-    if (asciiChars == theme.regular) setAsciiChar(theme.invert);
-    else setAsciiChar(theme.regular);
-  }
   function handleStartVideo() {
-    if (!cameraReady) return;
+    if (cameraReady != "active") return;
     if (startVideoRecording == false) startRecording();
     else if (startVideoRecording == true) mediaRecorderRef.current!.stop();
     setStartVideoRecording(!startVideoRecording);
@@ -71,7 +64,7 @@ export default function ActionPanel({
   }
 
   function captureImage() {
-    if (!asciiCanvasRef.current || !cameraReady) return;
+    if (!asciiCanvasRef.current || cameraReady != "active") return;
     const asciiCanvas = asciiCanvasRef.current;
     const dataUrl = asciiCanvas.toDataURL("image/png");
     const link = document.createElement("a");

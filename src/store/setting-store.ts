@@ -3,6 +3,7 @@ import type { StateCreator } from "zustand";
 import {
   Colors,
   Theme,
+  type CameraState,
   type ColorValue,
   type ThemeValue,
 } from "@/lib/styletypes";
@@ -20,7 +21,7 @@ interface SettingState {
   brightness: number;
   video: boolean;
   startVideoRecording: boolean;
-  cameraReady: boolean;
+  cameraReady: CameraState;
   isFront: boolean;
   asciiChars: string[];
 }
@@ -41,7 +42,7 @@ interface SettingAction {
   setBrightness: (brightness: number) => void;
   setVideo: (video: boolean) => void;
   setStartVideoRecording: (startVideoRecording: boolean) => void;
-  setCameraReady: (cameraReady: boolean) => void;
+  setCameraReady: (cameraReady: CameraState) => void;
   setFront: (isFront: boolean) => void;
   setAsciiChar: (asciiChar: string[]) => void;
 }
@@ -61,7 +62,7 @@ const SettingStore: StateCreator<SettingStoreType> = (set) => ({
   brightness: 0.12,
   video: false,
   startVideoRecording: false,
-  cameraReady: false,
+  cameraReady: "loading",
   isFront: true,
   asciiChars: Theme.Normal.regular,
 
@@ -85,7 +86,8 @@ const SettingStore: StateCreator<SettingStoreType> = (set) => ({
   setStartVideoRecording: (startVideoRecording: boolean) =>
     set({ startVideoRecording: startVideoRecording }),
 
-  setCameraReady: (cameraReady: boolean) => set({ cameraReady: cameraReady }),
+  setCameraReady: (cameraReady: CameraState) =>
+    set({ cameraReady: cameraReady }),
   setFront: (isFont: boolean) => set({ isFront: isFont }),
   setAsciiChar: (asciiChar: string[]) => set({ asciiChars: asciiChar }),
 });
