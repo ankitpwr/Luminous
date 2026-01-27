@@ -14,6 +14,13 @@ export function measureCharBox(
   document.body.appendChild(span);
   const rect = span.getBoundingClientRect();
   document.body.removeChild(span);
+  console.log(
+    `in measureCharBox `,
+    "width:-",
+    rect.width,
+    "height:-",
+    rect.height,
+  );
 
   return { width: Math.floor(rect.width), height: Math.floor(rect.height) };
 }

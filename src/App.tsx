@@ -12,7 +12,6 @@ import { calculateGrayscaleValue, renderAsciiGrayscale } from "./lib/grayscale";
 import PopupDrawer from "./components/popupDrawer";
 
 function App() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const asciiCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -38,15 +37,13 @@ function App() {
     () => measureCharBox(fontSize, letterSpacing, lineHeight),
     [fontSize],
   );
-  console.log(`1. camera status is `, cameraReady);
 
   useEffect(() => {
     async function startCamera() {
       try {
         if (!videoRef.current) return;
         //get camera access
-        console.log(`2. camera status is `, cameraReady);
-        // setCameraReady("loading");
+
         streamRef.current = await navigator.mediaDevices.getUserMedia({
           audio: false,
           video: {
@@ -54,7 +51,6 @@ function App() {
           },
         });
         //Attach stream to video
-        console.log(`3. camera status is `, cameraReady);
         videoRef.current.srcObject = streamRef.current;
         await videoRef.current.play();
         setCameraReady("active");
@@ -62,8 +58,6 @@ function App() {
         console.log("errror is ", err);
         setCameraReady("denied");
       }
-
-      console.log(`4. camera status is `, cameraReady);
     }
     startCamera();
 
@@ -77,37 +71,26 @@ function App() {
     let animationId: number;
 
     async function startCanvas() {
-      if (
-        !videoRef.current ||
-        !canvasRef.current ||
-        !asciiCanvasRef.current ||
-        !streamRef.current
-      ) {
+      if (!videoRef.current || !asciiCanvasRef.current || !streamRef.current) {
         return;
       }
 
       const dpr = window.devicePixelRatio || 1;
 
-      const canvas = canvasRef.current;
-      const asciiCanvas = asciiCanvasRef.current;
-      const ctx = canvas.getContext("2d")!;
-      canvas.width = Math.floor(window.innerWidth * dpr);
-      canvas.height = Math.floor(window.innerHeight * dpr);
-      canvas.style.width = `${window.innerWidth}px`;
-      canvas.style.height = `${window.innerHeight}px`;
-
       const { width: charW, height: charH } = charDimension;
 
       const cols = Math.floor(window.innerWidth / charW);
       const rows = Math.floor(window.innerHeight / charH);
-      const tinyCanvas = document.createElement("canvas");
-      const tinyCtx = tinyCanvas.getContext("2d");
+
+      const asciiCanvas = asciiCanvasRef.current;
       asciiCanvas.width = Math.floor(cols * charW * dpr);
       asciiCanvas.height = Math.floor(rows * charH * dpr);
       asciiCanvas.style.width = `${window.innerWidth}px`;
       asciiCanvas.style.height = `${window.innerHeight}px`;
       asciiCanvas.style.display = "block";
 
+      const tinyCanvas = document.createElement("canvas");
+      const tinyCtx = tinyCanvas.getContext("2d");
       tinyCanvas.width = cols;
       tinyCanvas.height = rows;
 
@@ -173,18 +156,15 @@ function App() {
     asciiChars,
   ]);
   return (
-    <div className=" bg-black w-screen h-screen overflow-hidden">
+    <div className=" bg-black w-screen h-screen overflow-hidden ">
       <PopupDrawer />
       <div className="fixed left-0 top-0 flex w-[100%] justify-between  px-4 py-4 ">
         <TitleBar />
         <Menu />
       </div>
-
       <ActionPanel asciiCanvasRef={asciiCanvasRef} />
       <video ref={videoRef} muted playsInline style={{ display: "none" }} />
-      <canvas ref={canvasRef} hidden />
       <canvas ref={asciiCanvasRef} />
-
       {sidebar && <SideBar />}
       {video && startVideoRecording && <Timer />}
     </div>

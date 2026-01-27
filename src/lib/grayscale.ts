@@ -43,8 +43,8 @@ export function renderAsciiGrayscale(
   asciiCtx.textBaseline = "top";
   const data = imageData.data;
 
-  const charW = blockWidth * dpr;
-  const charH = blockHeight * dpr;
+  const charW = Math.ceil(blockWidth * dpr);
+  const charH = Math.ceil(blockHeight * dpr);
 
   for (let i = 0; i < imageData.height; i++) {
     let gray = 0;
@@ -54,8 +54,9 @@ export function renderAsciiGrayscale(
       const charIndex = Math.floor((gray / 255) * (asciiChar.length - 1));
       asciiCtx.fillStyle =
         color == "#6a7282" ? `rgb(${gray},${gray},${gray})` : color;
-      const dx = Math.round(j * charW);
-      const dy = Math.round(i * charH);
+      const dx = j * charW;
+      const dy = i * charH;
+
       asciiCtx.fillText(asciiChar[charIndex], dx, dy);
     }
   }
