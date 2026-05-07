@@ -27,11 +27,11 @@ export default function Timer() {
   }, []);
   return (
     <div className="flex gap-1 fixed top-6 left-1/2 -translate-x-1/2 text-white bg-red-600 px-4 py-1 rounded-full font-montserrat font-semibold">
-      <span> {hours}</span>
+      <span> {hours < 9 ? `0${hours}` : `${hours}`}</span>
       <span>:</span>
-      <span> {minutes}</span>
+      <span> {minutes < 9 ? `0${minutes}` : `${hours}`}</span>
       <span>:</span>
-      <span> {seconds}</span>
+      <span> {seconds < 9 ? `0${seconds}` : `${seconds}`}</span>
     </div>
   );
 }

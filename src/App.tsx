@@ -4,7 +4,7 @@ import useSettingStore from "./store/setting-store";
 import SideBar from "./components/sideBar";
 import ActionPanel from "./components/actionPanel";
 import Timer from "./components/timer";
-import TitleBar from "./components/navBar";
+import TitleBar from "./components/titleBar";
 import Menu from "./components/menu";
 import { downScaleColorImage } from "./lib/colorImage";
 import { measureCharBox } from "./lib/measureCharBox";
